@@ -2,7 +2,7 @@ namespace RLSharpSlam.MVVM.CustomViews;
 
 public partial class DoubleBufferImage : ContentView
 {
-    private bool _isImage1Visible = true;
+    private int _imageCnt = 0;
 
     public static readonly BindableProperty ImageSourceProperty =
         BindableProperty.Create(
@@ -31,15 +31,28 @@ public partial class DoubleBufferImage : ContentView
 
     public async Task UpdateImageSourceAsync(ImageSource newSource)
     {
-        if (_isImage1Visible)
+        switch (_imageCnt)
         {
-            Image2.Source = newSource;
+            case 0:
+                Image2.IsVisible = true;
+                Image1.IsVisible = false;
+                Image1.Source = newSource;
+                _imageCnt++;
+                break;
+            case 1:
+                Image3.IsVisible = true;
+                Image2.IsVisible = false;
+                Image2.Source = newSource;
+                _imageCnt++;
+                break;
+            case 2:
+                Image1.IsVisible = true;
+                Image3.IsVisible = false;
+                Image3.Source = newSource;
+                _imageCnt = 0;
+                break;
+            default:
+                break;
         }
-        else
-        {
-            Image1.Source = newSource;
-        }
-
-        _isImage1Visible = !_isImage1Visible;
     }
 }

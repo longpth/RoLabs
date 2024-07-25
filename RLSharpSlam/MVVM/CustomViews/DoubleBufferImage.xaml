@@ -11,8 +11,9 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Image x:Name="Image2" WidthRequest="640" HeightRequest="460"/>
             <Image x:Name="Image1" WidthRequest="640" HeightRequest="460"/>
+            <Image x:Name="Image2" WidthRequest="640" HeightRequest="460"/>
+            <Image x:Name="Image3" WidthRequest="640" HeightRequest="460"/>
         </Grid>
     </VerticalStackLayout>
 </ContentView>

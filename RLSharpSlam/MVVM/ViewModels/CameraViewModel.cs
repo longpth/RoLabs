@@ -20,6 +20,7 @@ namespace RLSharpSlam.MVVM.ViewModels
     public class CameraViewModel : BaseViewModel, IDisposable
     {
         private readonly int ProcessWidth=640, ProcessHeight=480;
+        private readonly int CaptureWaitTime = 20; // milliseconds
 
         private static CameraViewModel instance = null;
         public static CameraViewModel Instance
@@ -204,7 +205,12 @@ namespace RLSharpSlam.MVVM.ViewModels
                     // If the frame could not be read, stop the loop and release resources
                     if (!ret)
                     {
-                        StopReadVideo();
+                        _cancellationTokenSource.Cancel();
+                        _cancellationTokenSource.Dispose();
+                        _cancellationTokenSource = null;
+                        // Reset the video capture position to the beginning
+                        _videoCapture.Release();
+                        _videoCapture.Open(_videoPath);
                         break;
                     }
 
@@ -223,7 +229,7 @@ namespace RLSharpSlam.MVVM.ViewModels
                 }
 
                 // Wait for a short delay before capturing the next frame
-                await Task.Delay(30); // Adjust the delay as needed
+                await Task.Delay(CaptureWaitTime); // Adjust the delay as needed
             }
 
             if (_cameraState == CameraState.Stop)
@@ -236,7 +242,7 @@ namespace RLSharpSlam.MVVM.ViewModels
 
         #endregion
 
-            #region command
+        #region command
         public Command StartCamera { get; set; }
         public Command StopCamera { get; set; }
         public Command PauseCamera { get; set; }
