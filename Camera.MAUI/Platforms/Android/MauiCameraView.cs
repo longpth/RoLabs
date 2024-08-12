@@ -22,7 +22,7 @@ namespace Camera.MAUI.Platforms.Android;
 
 public class MauiCameraViewCallBack
 {
-    public delegate void ImageAvailableEventHandler(byte[] imageData);
+    public delegate void ImageAvailableEventHandler(byte[] imageData, int width, int height);
 }
 
 internal class MauiCameraView: GridLayout
@@ -912,7 +912,7 @@ internal class MauiCameraView: GridLayout
                 cameraView.capturePhoto = imageData;
 
                 // Raise the event with the imageData
-                cameraView.ImageAvailable?.Invoke(imageData);
+                cameraView.ImageAvailable?.Invoke(imageData, image.Width, image.Height);
 
                 buffer.Clear();
                 image.Close();

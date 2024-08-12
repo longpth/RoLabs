@@ -16,6 +16,7 @@ using MediaManager.Forms.Xaml;
 using Microsoft.Maui.Controls;
 using System.Diagnostics;
 using Android.Views.Animations;
+using RLSharpSlam.MVVM.CustomViews;
 
 namespace RLSharpSlam.MVVM.ViewModels
 {
@@ -23,7 +24,7 @@ namespace RLSharpSlam.MVVM.ViewModels
     public class CameraViewModel : BaseViewModel, IDisposable
     {
         private readonly int ProcessWidth=640, ProcessHeight=480;
-        private readonly int CaptureWaitTime = 20; // milliseconds
+        private readonly int CaptureWaitTime = 33; // milliseconds
 
         private static CameraViewModel instance = null;
         public static CameraViewModel Instance
@@ -74,20 +75,6 @@ namespace RLSharpSlam.MVVM.ViewModels
         public bool AutoStartPreview { get; set; } = false;
         public bool AutoStartRecording { get; set; } = false;
 
-        private Stream _cameraSnapShotStream;
-        private ImageSource _cameraSnapShotImage;
-        public Stream SnapShotStream
-        {
-            get => _cameraSnapShotStream;
-            set
-            {
-                _cameraSnapShotStream = value;
-                _cameraSnapShotImage = ImageSource.FromStream(() => _cameraSnapShotStream);
-                //ImageSource = _cameraSnapShotImage;
-                OnPropertyChanged(nameof(SnapShotStream));
-            }
-        }
-
         private bool _useCamera=false;
         public bool UseCamera
         {
@@ -114,6 +101,43 @@ namespace RLSharpSlam.MVVM.ViewModels
             }
         }
 
+        private Mat _cameraGrabbedImage;
+        public Mat CameraGrabbedImage
+        {
+            get => _cameraGrabbedImage;
+            set
+            {
+                if (_cameraGrabbedImage != value)
+                {
+                    _cameraGrabbedImage = value;
+                    List<PointF> extractedPoints = new List<PointF>();
+                    KeyPoint[] keyPoints = ImageProcessing.FeatureExtraction(_cameraGrabbedImage);
+                    foreach (var kp in keyPoints)
+                    {
+                        extractedPoints.Add(new PointF(kp.Pt.X, kp.Pt.Y));
+                    }
+                    if (extractedPoints.Count > 0)
+                    {
+                        CameraViewCanvas = new PointsDrawable(extractedPoints);
+                    }
+                    OnPropertyChanged(nameof(CameraGrabbedImage));
+                }
+            }
+        }
+
+        private IDrawable _cameraViewCanvas;
+        public IDrawable CameraViewCanvas
+        {
+            get => _cameraViewCanvas;
+            set
+            {
+                if (_cameraViewCanvas != value)
+                {
+                    _cameraViewCanvas = value;
+                    OnPropertyChanged(nameof(CameraViewCanvas));
+                }
+            }
+        }
         #endregion
 
         #region private variables
@@ -153,44 +177,8 @@ namespace RLSharpSlam.MVVM.ViewModels
             _frameResized = new Mat();
             _frameProcessed = new Mat();
             _frameTransposed = new Mat();
+            _cameraGrabbedImage = new Mat();
             _videoCapture.Read(_frame);
-        }
-
-        /// <summary>
-        /// Processes the given image by converting it to grayscale and detecting ORB keypoints.
-        /// </summary>
-        /// <param name="img">The image to process.</param>
-        private void ProcessImage(Mat img)
-        {
-            using var gray = new Mat();
-
-            // Convert image to grayscale
-            Cv2.CvtColor(img, gray, ColorConversionCodes.BGR2GRAY);
-
-            if (img.Empty())
-            {
-                Console.WriteLine("Could not open or find the image!");
-                return;
-            }
-
-            // Initialize ORB detector
-            var orb = ORB.Create();
-
-            // Detect ORB keypoints and descriptors
-            KeyPoint[] keypoints;
-            using var descriptors = new Mat();
-            orb.DetectAndCompute(gray, null, out keypoints, descriptors);
-
-            // Draw keypoints
-            using var imgWithKeypoints = img.Clone(); // Create a copy of the input image
-
-            // Iterate through each keypoint and draw a dot
-            foreach (var keypoint in keypoints)
-            {
-                Cv2.Circle(imgWithKeypoints, (OpenCvSharp.Point)keypoint.Pt, 6, Scalar.Green, -1); // Draw a small circle (dot) at each keypoint
-            }
-
-            imgWithKeypoints.CopyTo(_frameProcessed);
         }
 
         /// <summary>
@@ -224,7 +212,7 @@ namespace RLSharpSlam.MVVM.ViewModels
                     }
 
                     // Process the captured frame
-                    ProcessImage(_frameResized);
+                    ImageProcessing.DrawFeatureExtraction(_frameResized).CopyTo(_frameProcessed);
 
                     // Create a new SKBitmap from the processed frame
                     var imageSource = _frameProcessed.ToImageSource();
@@ -300,6 +288,8 @@ namespace RLSharpSlam.MVVM.ViewModels
 
             OnPropertyChanged(nameof(StartCamera));
             OnPropertyChanged(nameof(StopCamera));
+
+            CameraViewCanvas = new PointsDrawable();
 
             InitializeAsync();
         }

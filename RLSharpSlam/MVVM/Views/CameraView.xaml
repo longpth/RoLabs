@@ -29,16 +29,13 @@
                                Camera="{Binding Camera}" 
                                AutoStartPreview="{Binding AutoStartPreview}"
                                NumCamerasDetected="{Binding NumCameras, Mode=OneWayToSource}"
-                               AutoSnapShotAsImageSource="False" 
-                               AutoSnapShotFormat="PNG"
-                               AutoSnapShotSeconds ="0.05"
-                               SnapShotStream="{Binding SnapShotStream}"
                     />
-                    <!--Placeholder for Video Player View-->
-                    <!-- Custom Image View for displaying the image from stream -->
-                    <!--<customViews:FadeImage x:Name="videoPlayerView" IsVisible="{Binding UseCamera, Converter={StaticResource InverseBooleanConverter}}"
-                          CustomImageSource="{Binding ImageSource}" WidthRequest="640" HeightRequest="460"/>-->
-                    <customViews:DoubleBufferImage ImageSource="{Binding ImageSource}" x:Name="doubleBufferImage"/>
+                    <!-- GraphicsView for overlay drawing -->
+                    <GraphicsView x:Name="overlayCanvas" WidthRequest="640" HeightRequest="460"
+                      Drawable="{Binding CameraViewCanvas}" />
+
+                    <!-- image view for video-->
+                    <customViews:DoubleBufferImage ImageSource="{Binding ImageSource}" x:Name="doubleBufferImage" IsVisible="{Binding UseCamera, Converter={StaticResource InverseBooleanConverter}}" WidthRequest="640" HeightRequest="460"/>
                 </Grid>
 
                 <HorizontalStackLayout HorizontalOptions="Center" Margin="5">

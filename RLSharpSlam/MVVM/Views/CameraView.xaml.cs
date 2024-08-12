@@ -22,10 +22,11 @@ public partial class CameraView : ContentView
     }
 
     // The method to process the image data
-    private void ProcessImage(byte[] imageData)
+    private void ProcessImage(byte[] imageData, int width, int height)
     {
         // Handle the image data (e.g., display or process it)
-        System.Diagnostics.Debug.WriteLine($"Received image data with length: {imageData.Length}");
+        System.Diagnostics.Debug.WriteLine($"Received image data with length: {imageData.Length} {width}x{height}");
+        _cameraViewModel.CameraGrabbedImage = Mat.FromImageData(imageData, ImreadModes.Color);
     }
 
 }

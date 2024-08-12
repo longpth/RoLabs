@@ -42,35 +42,6 @@ namespace RLSharpSlam.MVVM.Helpers
                 return SKBitmap.Decode(stream);
             }
         }
-
-        // Convert a Stream to Mat
-        public static Mat StreamToMat(Stream inputStream)
-        {
-            if (inputStream == null)
-            {
-                throw new ArgumentNullException(nameof(inputStream), "Input stream cannot be null.");
-            }
-
-            try
-            {
-                // Read the stream into a byte array
-                using (var memoryStream = new MemoryStream())
-                {
-                    inputStream.CopyTo(memoryStream);
-                    byte[] imageData = memoryStream.ToArray();
-
-                    // Load the byte array into a Mat
-                    return Mat.FromImageData(imageData, ImreadModes.Color);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error converting stream to Mat: {ex.Message}");
-                return new Mat(); // Return an empty Mat in case of an error
-            }
-        }
-
-
     }
 
     public class SKBitmapImageSource : StreamImageSource
