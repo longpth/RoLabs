@@ -13,6 +13,9 @@ using CommunityToolkit.Maui.Views;
 using RLSharpSlam.MVVM.Helpers;
 using System.Threading;
 using MediaManager.Forms.Xaml;
+using Microsoft.Maui.Controls;
+using System.Diagnostics;
+using Android.Views.Animations;
 
 namespace RLSharpSlam.MVVM.ViewModels
 {
@@ -80,6 +83,7 @@ namespace RLSharpSlam.MVVM.ViewModels
             {
                 _cameraSnapShotStream = value;
                 _cameraSnapShotImage = ImageSource.FromStream(() => _cameraSnapShotStream);
+                //ImageSource = _cameraSnapShotImage;
                 OnPropertyChanged(nameof(SnapShotStream));
             }
         }
@@ -115,12 +119,14 @@ namespace RLSharpSlam.MVVM.ViewModels
         #region private variables
         VideoCapture _videoCapture;
         private Mat _frame;
+        private Mat _frameTransposed;
         private Mat _frameResized;
         private Mat _frameProcessed;
         private string _videoPath;
         private CancellationTokenSource _cancellationTokenSource;
         private Task _readVideoTask;
         private CameraState _cameraState = CameraState.Stop;
+        private long lastTime = 0;
         #endregion
 
         #region private methods
@@ -146,6 +152,7 @@ namespace RLSharpSlam.MVVM.ViewModels
             _frame = new Mat();
             _frameResized = new Mat();
             _frameProcessed = new Mat();
+            _frameTransposed = new Mat();
             _videoCapture.Read(_frame);
         }
 
@@ -200,7 +207,9 @@ namespace RLSharpSlam.MVVM.ViewModels
                     // Read a frame from the video capture
                     bool ret = _videoCapture.Read(_frame);
 
-                    Cv2.Resize(_frame, _frameResized, new OpenCvSharp.Size(ProcessWidth, ProcessHeight));
+                    Cv2.Transpose(_frame, _frameTransposed);
+                    Cv2.Flip(_frameTransposed, _frameTransposed, FlipMode.Y);
+                    Cv2.Resize(_frameTransposed, _frameResized, new OpenCvSharp.Size(ProcessWidth, ProcessHeight));
 
                     // If the frame could not be read, stop the loop and release resources
                     if (!ret)

@@ -29,7 +29,7 @@
                                Camera="{Binding Camera}" 
                                AutoStartPreview="{Binding AutoStartPreview}"
                                NumCamerasDetected="{Binding NumCameras, Mode=OneWayToSource}"
-                               AutoSnapShotAsImageSource="True" 
+                               AutoSnapShotAsImageSource="False" 
                                AutoSnapShotFormat="PNG"
                                AutoSnapShotSeconds ="0.05"
                                SnapShotStream="{Binding SnapShotStream}"
