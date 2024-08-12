@@ -56,10 +56,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Platforms\Android\libs\arm64-v8a\libOpenCvSharp_Android.so" />
 	  <None Remove="Platforms\Android\libs\x86_64\libOpenCvSharp_Android.so" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidNativeLibrary Include="Platforms\Android\libs\arm64-v8a\libOpenCvSharp_Android.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\x86_64\libOpenCvSharp_Android.so" />
 	</ItemGroup>
 
@@ -1691,7 +1693,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Platforms\Android\libs\arm64-v8a\" />
 	  <Folder Include="Platforms\Android\libs\armeabi-v7a\" />
 	</ItemGroup>
 

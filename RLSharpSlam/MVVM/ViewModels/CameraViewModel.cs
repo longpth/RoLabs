@@ -129,7 +129,7 @@ namespace RLSharpSlam.MVVM.ViewModels
         /// </summary>
         private async void InitializeAsync()
         {
-            _videoPath = await Utils.CopyFileToAppDataDirectory("test_countryroad.mp4");
+            _videoPath = await Utils.CopyFileToAppDataDirectory("test.mp4");
             OnFileCopyCompleted();
         }
 
