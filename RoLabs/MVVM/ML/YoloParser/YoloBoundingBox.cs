@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Color = Microsoft.Maui.Graphics.Color;
+using Color = System.Drawing.Color;
 
 namespace RoLabs.MVVM.ML.YoloParser
 {

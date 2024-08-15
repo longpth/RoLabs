@@ -917,8 +917,9 @@ internal class MauiCameraView: GridLayout
                 buffer.Clear();
                 image.Close();
             }
-            catch
+            catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine("[MauiCameraView] Exception =   " + e.ToString());
             }
             cameraView.captureDone = true;
         }

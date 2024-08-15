@@ -25,22 +25,22 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <cv:CameraView x:Name="cameraView" WidthRequest="640" HeightRequest="480" 
-                               Cameras="{Binding Cameras, Mode=OneWayToSource}" 
-                               Camera="{Binding Camera}" 
-                               AutoStartPreview="{Binding AutoStartPreview}"
-                               NumCamerasDetected="{Binding NumCameras, Mode=OneWayToSource}"
+                               Cameras="{Binding CameraViewModel.Cameras, Mode=OneWayToSource}" 
+                               Camera="{Binding CameraViewModel.Camera}" 
+                               AutoStartPreview="{Binding CameraViewModel.AutoStartPreview}"
+                               NumCamerasDetected="{Binding CameraViewModel.NumCameras, Mode=OneWayToSource}"
                     />
                     <!-- GraphicsView for overlay drawing -->
                     <GraphicsView x:Name="overlayCanvas" WidthRequest="640" HeightRequest="480"
                       Drawable="{Binding CameraViewCanvas}" />
 
                     <!-- image view for video-->
-                    <customViews:DoubleBufferImage ImageSource="{Binding ImageSource}" x:Name="doubleBufferImage" IsVisible="{Binding UseCamera, Converter={StaticResource InverseBooleanConverter}}" WidthRequest="640" HeightRequest="480"/>
+                    <customViews:DoubleBufferImage ImageSource="{Binding CameraViewModel.ImageSource}" x:Name="doubleBufferImage" IsVisible="{Binding CameraViewModel.UseCamera, Converter={StaticResource InverseBooleanConverter}}" WidthRequest="640" HeightRequest="480"/>
                 </Grid>
 
                 <HorizontalStackLayout HorizontalOptions="Center" Margin="5">
                     <Label Text="Select a camera:" VerticalOptions="Center" BackgroundColor="White" TextColor="Black"/>
-                    <Picker VerticalOptions="Center" TextColor="Black" ItemsSource="{Binding Cameras}" SelectedItem="{Binding Camera,Mode=TwoWay}"/>
+                    <Picker VerticalOptions="Center" TextColor="Black" ItemsSource="{Binding CameraViewModel.Cameras}" SelectedItem="{Binding CameraViewModel.Camera,Mode=TwoWay}"/>
                 </HorizontalStackLayout>
 
                 <HorizontalStackLayout HorizontalOptions="Center" Margin="2" Spacing="2">
@@ -49,15 +49,15 @@
                 </HorizontalStackLayout>
 
                 <HorizontalStackLayout HorizontalOptions="Center" Margin="5">
-                    <Button Text="Start Camera" Command="{Binding StartCamera}" Margin="5"/>
-                    <Button Text="Pause Camera" Command="{Binding PauseCamera}" Margin="5"/>
-                    <Button Text="Stop Camera" Command="{Binding StopCamera}" Margin="5"/>
+                    <Button Text="Start Camera" Command="{Binding CameraViewModel.StartCamera}" Margin="5"/>
+                    <Button Text="Pause Camera" Command="{Binding CameraViewModel.PauseCamera}" Margin="5"/>
+                    <Button Text="Stop Camera" Command="{Binding CameraViewModel.StopCamera}" Margin="5"/>
                 </HorizontalStackLayout>
 
                 <HorizontalStackLayout HorizontalOptions="Center">
                     <Label Text="Use Camera" VerticalOptions="Center" BackgroundColor="White" TextColor="Black"/>
                     <!-- CheckBox for toggling camera use -->
-                    <CheckBox IsChecked="{Binding UseCamera}" HorizontalOptions="Center"/>
+                    <CheckBox IsChecked="{Binding CameraViewModel.UseCamera}" HorizontalOptions="Center"/>
                 </HorizontalStackLayout>
 
             </VerticalStackLayout>

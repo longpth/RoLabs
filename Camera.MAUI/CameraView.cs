@@ -304,9 +304,15 @@ public class CameraView : View, ICameraView
     internal Size PhotosResolution = new(0, 0);
 
 #if ANDROID
-    public Camera.MAUI.Platforms.Android.MauiCameraViewCallBack.ImageAvailableEventHandler ImageCallback {get;set;} = null;
-#endif
+    private List<Camera.MAUI.Platforms.Android.MauiCameraViewCallBack.ImageAvailableEventHandler> _imageAvailableCallBacks = new List<Camera.MAUI.Platforms.Android.MauiCameraViewCallBack.ImageAvailableEventHandler>();
 
+    public void RegisterImageGrabbedCallback(Camera.MAUI.Platforms.Android.MauiCameraViewCallBack.ImageAvailableEventHandler ImageCallback)
+    {
+        if(ImageCallback != null){
+            _imageAvailableCallBacks.Add(ImageCallback);
+        }
+    }
+#endif
     public CameraView()
     {
         HandlerChanged += CameraView_HandlerChanged;
@@ -432,10 +438,12 @@ public class CameraView : View, ICameraView
             {
                 result = await handler.StartCameraAsync(Resolution);
 #if ANDROID
-                    if(ImageCallback != null)
-                    {
-                        handler.RegisterCallbackForProcessGrabbedImage(ImageCallback);
-                    }
+                foreach(var callback in _imageAvailableCallBacks)
+                {
+                   if(callback!=null){
+                        handler.RegisterCallbackForProcessGrabbedImage(callback);
+                   }
+                }
 #endif
                 if (result == CameraResult.Success)
                 {
@@ -490,9 +498,11 @@ public class CameraView : View, ICameraView
         if (Handler != null && Handler is CameraViewHandler handler)
         {
 #if ANDROID
-            if (ImageCallback != null)
+            foreach(var callback in _imageAvailableCallBacks)
             {
-                handler.UnRegisterCallbackForProcessGrabbedImage(ImageCallback);
+                if(callback!=null){
+                    handler.UnRegisterCallbackForProcessGrabbedImage(callback);
+                }
             }
 #endif
             result = await handler.StopCameraAsync();

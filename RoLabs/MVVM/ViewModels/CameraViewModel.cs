@@ -110,21 +110,6 @@ namespace Rolabs.MVVM.ViewModels
             {
                 if (_cameraGrabbedImage != value)
                 {
-                    _cameraGrabbedImage = value;
-                    List<PointF> extractedPoints = new List<PointF>();
-                    KeyPoint[] keyPoints = ImageProcessing.FeatureExtraction(_cameraGrabbedImage);
-                    foreach (var kp in keyPoints)
-                    {
-                        int imageWidth = _cameraGrabbedImage.Width;
-                        int imageHeight = _cameraGrabbedImage.Height;
-                        float scaleX = (float)imageWidth / (float)ProcessWidth;
-                        float scaleY = (float)imageHeight / (float)ProcessHeight;
-                        extractedPoints.Add(new PointF(kp.Pt.X/ scaleX, kp.Pt.Y/ scaleY));
-                    }
-                    if (extractedPoints.Count > 0)
-                    {
-                        CameraViewCanvas = new PointsDrawable(extractedPoints);
-                    }
                     OnPropertyChanged(nameof(CameraGrabbedImage));
                 }
             }
@@ -340,6 +325,14 @@ namespace Rolabs.MVVM.ViewModels
                 _cancellationTokenSource.Dispose();
                 _cancellationTokenSource = null;
             }
+        }
+
+        // The method to process the image data
+        public void GrabImage(byte[] imageData, int width, int height)
+        {
+            // Handle the image data (e.g., display or process it)
+            System.Diagnostics.Debug.WriteLine($"[CameraViewModel] Received image data with length: {imageData.Length} {width}x{height}");
+            CameraGrabbedImage = Mat.FromImageData(imageData, ImreadModes.Color);
         }
         #endregion
 

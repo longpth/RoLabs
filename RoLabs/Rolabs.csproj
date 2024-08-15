@@ -81,6 +81,7 @@
 	  <PackageReference Include="CommunityToolkit.Maui" Version="9.0.2" />
 	  <PackageReference Include="Microsoft.ML" Version="3.0.1" />
 	  <PackageReference Include="Microsoft.ML.ImageAnalytics" Version="3.0.1" />
+	  <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.18.1" />
 	  <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="3.0.1" />
 	  <PackageReference Include="Plugin.MediaManager" Version="1.2.2" />
 	  <PackageReference Include="Plugin.MediaManager.Forms" Version="1.2.2" />
