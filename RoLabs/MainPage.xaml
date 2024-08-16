@@ -4,8 +4,10 @@
              xmlns:views="clr-namespace:Rolabs.MVVM.Views;assembly=Rolabs" 
              x:Class="Rolabs.MainPage">
 
-    <StackLayout>
-        <views:CameraView />
-    </StackLayout>
+    <ScrollView>
+        <StackLayout Orientation="Vertical" HorizontalOptions="Center" VerticalOptions="Center">
+            <views:CameraView />
+        </StackLayout>
+    </ScrollView>
 
 </ContentPage>

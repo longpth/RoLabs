@@ -24,7 +24,7 @@ namespace Rolabs.MVVM.ViewModels
     public enum CameraState { Start, Stop, Pause };
     public class CameraViewModel : BaseViewModel, IDisposable
     {
-        private readonly int ProcessWidth=640, ProcessHeight=480;
+        private readonly int ProcessWidth=480, ProcessHeight=640;
         private readonly int CaptureWaitTime = 33; // milliseconds
 
         private static CameraViewModel instance = null;

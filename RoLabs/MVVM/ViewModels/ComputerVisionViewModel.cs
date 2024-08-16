@@ -1,14 +1,26 @@
 ﻿using RoLabs.MVVM.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OpenCvSharp;
+using Rolabs.MVVM.Helpers;
 
 namespace Rolabs.MVVM.ViewModels
 {
     public class ComputerVisionViewModel: BaseViewModel
     {
+        private ImageSource _imageSource;
+
+        public ImageSource ImageSource
+        {
+            get => _imageSource;
+            set
+            {
+                if (_imageSource != value)
+                {
+                    _imageSource = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private static ComputerVisionViewModel _instance = null;
         public static ComputerVisionViewModel Instance
         {
@@ -27,8 +39,12 @@ namespace Rolabs.MVVM.ViewModels
         {
             // Handle the image data (e.g., display or process it)
             System.Diagnostics.Debug.WriteLine($"[ComputerVisionViewModel] Received image data with length: {imageData.Length} {width}x{height}");
+
             //var boundingBoxes = ObjectDetection.Instance.Score(imageData);
             //System.Diagnostics.Debug.WriteLine($"[ComputerVisionViewModel] boundingBoxes count = {boundingBoxes.Count}");
+
+            Mat result = FaceDetection.Instance.DetectFaces(imageData);
+            ImageSource = result.ToImageSource();
         }
     }
 }

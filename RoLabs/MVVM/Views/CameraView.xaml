@@ -13,54 +13,53 @@
             <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
         </ResourceDictionary>
     </ContentView.Resources>
-    <ScrollView>
+    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
         <Grid>
-            <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                <Grid>
-                    <!-- Define a single row and a single column -->
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <cv:CameraView x:Name="cameraView" WidthRequest="640" HeightRequest="480" 
-                               Cameras="{Binding CameraViewModel.Cameras, Mode=OneWayToSource}" 
-                               Camera="{Binding CameraViewModel.Camera}" 
-                               AutoStartPreview="{Binding CameraViewModel.AutoStartPreview}"
-                               NumCamerasDetected="{Binding CameraViewModel.NumCameras, Mode=OneWayToSource}"
-                    />
-                    <!-- GraphicsView for overlay drawing -->
-                    <GraphicsView x:Name="overlayCanvas" WidthRequest="640" HeightRequest="480"
-                      Drawable="{Binding CameraViewCanvas}" />
+            <!-- Define a single row and a single column -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <cv:CameraView x:Name="cameraView" WidthRequest="480" HeightRequest="640" 
+                        Cameras="{Binding CameraViewModel.Cameras, Mode=OneWayToSource}" 
+                        Camera="{Binding CameraViewModel.Camera}" 
+                        AutoStartPreview="{Binding CameraViewModel.AutoStartPreview}"
+                        NumCamerasDetected="{Binding CameraViewModel.NumCameras, Mode=OneWayToSource}"
+            />
 
-                    <!-- image view for video-->
-                    <customViews:DoubleBufferImage ImageSource="{Binding CameraViewModel.ImageSource}" x:Name="doubleBufferImage" IsVisible="{Binding CameraViewModel.UseCamera, Converter={StaticResource InverseBooleanConverter}}" WidthRequest="640" HeightRequest="480"/>
-                </Grid>
+            <!--<customViews:DoubleBufferImage Grid.Row="1" ImageSource="{Binding ComputerVisionViewModel.ImageSource}" WidthRequest="480" HeightRequest="640" />-->
 
-                <HorizontalStackLayout HorizontalOptions="Center" Margin="5">
-                    <Label Text="Select a camera:" VerticalOptions="Center" BackgroundColor="White" TextColor="Black"/>
-                    <Picker VerticalOptions="Center" TextColor="Black" ItemsSource="{Binding CameraViewModel.Cameras}" SelectedItem="{Binding CameraViewModel.Camera,Mode=TwoWay}"/>
-                </HorizontalStackLayout>
+            <!-- GraphicsView for overlay drawing -->
+            <GraphicsView x:Name="overlayCanvas" WidthRequest="480" HeightRequest="640"
+                Drawable="{Binding CameraViewCanvas}"/>
 
-                <HorizontalStackLayout HorizontalOptions="Center" Margin="2" Spacing="2">
-                    <Label Text="Zoom" VerticalOptions="Center" TextColor="Black"/>
-                    <Stepper BindingContext="{x:Reference cameraView}" Minimum="{Binding MinZoomFactor}" Maximum="7" Increment="0.5" Value="{Binding ZoomFactor,Mode=TwoWay}" />
-                </HorizontalStackLayout>
-
-                <HorizontalStackLayout HorizontalOptions="Center" Margin="5">
-                    <Button Text="Start Camera" Command="{Binding CameraViewModel.StartCamera}" Margin="5"/>
-                    <Button Text="Pause Camera" Command="{Binding CameraViewModel.PauseCamera}" Margin="5"/>
-                    <Button Text="Stop Camera" Command="{Binding CameraViewModel.StopCamera}" Margin="5"/>
-                </HorizontalStackLayout>
-
-                <HorizontalStackLayout HorizontalOptions="Center">
-                    <Label Text="Use Camera" VerticalOptions="Center" BackgroundColor="White" TextColor="Black"/>
-                    <!-- CheckBox for toggling camera use -->
-                    <CheckBox IsChecked="{Binding CameraViewModel.UseCamera}" HorizontalOptions="Center"/>
-                </HorizontalStackLayout>
-
-            </VerticalStackLayout>
+            <!--image view for video-->
+            <customViews:DoubleBufferImage ImageSource="{Binding CameraViewModel.ImageSource}" x:Name="doubleBufferImage" IsVisible="{Binding CameraViewModel.UseCamera, Converter={StaticResource InverseBooleanConverter}}" WidthRequest="480" HeightRequest="640"/>
         </Grid>
-    </ScrollView>
+
+        <HorizontalStackLayout HorizontalOptions="Center" Margin="5">
+            <Label Text="Select a camera:" VerticalOptions="Center" BackgroundColor="White" TextColor="Black"/>
+            <Picker VerticalOptions="Center" TextColor="Black" ItemsSource="{Binding CameraViewModel.Cameras}" SelectedItem="{Binding CameraViewModel.Camera,Mode=TwoWay}"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout HorizontalOptions="Center" Margin="2" Spacing="2">
+            <Label Text="Zoom" VerticalOptions="Center" TextColor="Black"/>
+            <Stepper BindingContext="{x:Reference cameraView}" Minimum="{Binding MinZoomFactor}" Maximum="7" Increment="0.5" Value="{Binding ZoomFactor,Mode=TwoWay}" />
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout HorizontalOptions="Center" Margin="5">
+            <Button Text="Start Camera" Command="{Binding CameraViewModel.StartCamera}" Margin="5"/>
+            <Button Text="Pause Camera" Command="{Binding CameraViewModel.PauseCamera}" Margin="5"/>
+            <Button Text="Stop Camera" Command="{Binding CameraViewModel.StopCamera}" Margin="5"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout HorizontalOptions="Center">
+            <Label Text="Use Camera" VerticalOptions="Center" BackgroundColor="White" TextColor="Black"/>
+            <!-- CheckBox for toggling camera use -->
+            <CheckBox IsChecked="{Binding CameraViewModel.UseCamera}" HorizontalOptions="Center"/>
+        </HorizontalStackLayout>
+
+    </VerticalStackLayout>
 </ContentView>
