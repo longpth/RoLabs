@@ -69,7 +69,7 @@
 	  <MauiXaml Update="MVVM\CustomViews\DoubleBufferImage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="MVVM\Views\CameraView.xaml">
+	  <MauiXaml Update="MVVM\Views\RoLabsCameraView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
@@ -97,6 +97,9 @@
 	<ItemGroup>
 	  <Compile Update="MVVM\CustomViews\DoubleBufferImage.xaml.cs">
 	    <DependentUpon>DoubleBufferImage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="MVVM\Views\RoLabsCameraView.xaml.cs">
+	    <DependentUpon>RoLabsCameraView.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="NewFolder\Cv2\Cv2.cs">
 	    <ExcludeFromCurrentConfiguration>false</ExcludeFromCurrentConfiguration>

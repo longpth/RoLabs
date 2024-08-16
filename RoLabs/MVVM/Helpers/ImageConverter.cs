@@ -1,9 +1,7 @@
 ﻿using Android.Graphics;
 using Java.Nio;
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
+using Microsoft.Maui.Graphics.Platform;
+using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace Rolabs.MVVM.Helpers
 {
@@ -31,6 +29,15 @@ namespace Rolabs.MVVM.Helpers
             // Return the raw pixel data
             return pixelData;
         }
+
+        public static IImage LoadImageFromByteArray(byte[] imageData)
+        {
+            using (var memoryStream = new MemoryStream(imageData))
+            {
+                return PlatformImage.FromStream(memoryStream);
+            }
+        }
+
     }
 
 }

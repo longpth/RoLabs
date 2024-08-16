@@ -6,7 +6,7 @@
 
     <ScrollView>
         <StackLayout Orientation="Vertical" HorizontalOptions="Center" VerticalOptions="Center">
-            <views:CameraView />
+            <views:RoLabsCameraView />
         </StackLayout>
     </ScrollView>
 

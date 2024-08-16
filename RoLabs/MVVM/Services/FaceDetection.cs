@@ -36,12 +36,13 @@ namespace RoLabs.MVVM.Services
             _eyeCascade = new CascadeClassifier(haarcascade_eye_path);
         }
 
-        public Mat DetectFaces(byte[] imageData)
+        public (OpenCvSharp.Rect[], Mat) DetectFaces(byte[] imageData)
         {
             // Convert byte[] to Mat
             Mat srcImage = Mat.FromImageData(imageData, ImreadModes.Color);
             Cv2.Transpose(srcImage, srcImage);
-            Cv2.Flip(srcImage, srcImage, FlipMode.Y);
+            Cv2.Flip(srcImage, srcImage, FlipMode.X);
+            Cv2.Resize(srcImage, srcImage, new OpenCvSharp.Size(480, 640));
             using var grayImage = new Mat();
             using var detectedFaceGrayImage = new Mat();
 
@@ -51,11 +52,14 @@ namespace RoLabs.MVVM.Services
 
             // Detect faces in the image
             var faces = _faceCascade.DetectMultiScale(
-                image: grayImage, 1.1, 9
+                image: grayImage,
+                scaleFactor: 1.1,
+                minNeighbors: 9,
+                minSize: new OpenCvSharp.Size(60, 60)
             );
 
             Debug.WriteLine($"[FaceDetection] Found {faces} faces");
-
+#if true
             // Define color for drawing rectangles and circles
             var faceColor = Scalar.FromRgb(0, 255, 0);
 
@@ -87,9 +91,9 @@ namespace RoLabs.MVVM.Services
                     Cv2.Circle(srcImage, center, (int)radius, faceColor, thickness: 2);
                 }
             }
-
+#endif
             // Return the processed image
-            return srcImage;
+            return (faces, srcImage);
         }
     }
 }

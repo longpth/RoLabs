@@ -1,11 +1,15 @@
 ﻿using RoLabs.MVVM.Services;
 using OpenCvSharp;
 using Rolabs.MVVM.Helpers;
+using Rolabs.MVVM.CustomViews;
 
 namespace Rolabs.MVVM.ViewModels
 {
     public class ComputerVisionViewModel: BaseViewModel
     {
+
+        private readonly int ProcessWidth = 480, ProcessHeight = 640;
+
         private ImageSource _imageSource;
 
         public ImageSource ImageSource
@@ -17,6 +21,20 @@ namespace Rolabs.MVVM.ViewModels
                 {
                     _imageSource = value;
                     OnPropertyChanged();
+                }
+            }
+        }
+
+        private IDrawable _cameraViewCanvas;
+        public IDrawable CameraViewCanvas
+        {
+            get => _cameraViewCanvas;
+            set
+            {
+                if (_cameraViewCanvas != value)
+                {
+                    _cameraViewCanvas = value;
+                    OnPropertyChanged(nameof(CameraViewCanvas));
                 }
             }
         }
@@ -43,8 +61,13 @@ namespace Rolabs.MVVM.ViewModels
             //var boundingBoxes = ObjectDetection.Instance.Score(imageData);
             //System.Diagnostics.Debug.WriteLine($"[ComputerVisionViewModel] boundingBoxes count = {boundingBoxes.Count}");
 
-            Mat result = FaceDetection.Instance.DetectFaces(imageData);
-            ImageSource = result.ToImageSource();
+            (OpenCvSharp.Rect[] detectedFaces, OpenCvSharp.Mat tmp) = FaceDetection.Instance.DetectFaces(imageData);
+
+            //Convert OpenCvSharp.Rect to Microsoft.Maui.Graphics.Rect for drawing
+            var faceRectangles = detectedFaces.Select(face => new Microsoft.Maui.Graphics.Rect(face.X, face.Y, face.Width, face.Height)).ToArray();
+
+            //Create a new FaceDetectionDrawable with the detected faces and a color, the image is transposed
+            CameraViewCanvas = new FaceDetectionDrawable(faceRectangles, Colors.Green, ProcessWidth, ProcessHeight);
         }
     }
 }

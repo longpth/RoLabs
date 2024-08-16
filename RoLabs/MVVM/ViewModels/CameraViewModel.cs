@@ -18,6 +18,7 @@ using System.Diagnostics;
 using Android.Views.Animations;
 using Rolabs.MVVM.CustomViews;
 using RoLabs.MVVM.Services;
+using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace Rolabs.MVVM.ViewModels
 {
@@ -102,15 +103,17 @@ namespace Rolabs.MVVM.ViewModels
             }
         }
 
-        private Mat _cameraGrabbedImage;
-        public Mat CameraGrabbedImage
+        private ImageSource _imageSourceCamera;
+
+        public ImageSource ImageSourceCamera
         {
-            get => _cameraGrabbedImage;
+            get => _imageSourceCamera;
             set
             {
-                if (_cameraGrabbedImage != value)
+                if (_imageSourceCamera != value)
                 {
-                    OnPropertyChanged(nameof(CameraGrabbedImage));
+                    _imageSourceCamera = value;
+                    OnPropertyChanged();
                 }
             }
         }
@@ -140,7 +143,6 @@ namespace Rolabs.MVVM.ViewModels
         private CancellationTokenSource _cancellationTokenSource;
         private Task _readVideoTask;
         private CameraState _cameraState = CameraState.Stop;
-        private long lastTime = 0;
         #endregion
 
         #region private methods
@@ -167,7 +169,6 @@ namespace Rolabs.MVVM.ViewModels
             _frameResized = new Mat();
             _frameProcessed = new Mat();
             _frameTransposed = new Mat();
-            _cameraGrabbedImage = new Mat();
             _videoCapture.Read(_frame);
         }
 
@@ -332,7 +333,39 @@ namespace Rolabs.MVVM.ViewModels
         {
             // Handle the image data (e.g., display or process it)
             System.Diagnostics.Debug.WriteLine($"[CameraViewModel] Received image data with length: {imageData.Length} {width}x{height}");
-            CameraGrabbedImage = Mat.FromImageData(imageData, ImreadModes.Color);
+            IImage image = ImageConverter.LoadImageFromByteArray(imageData);
+
+            // Assume the target width and height are the dimensions of the GraphicsView
+            float targetWidth = ProcessWidth;
+            float targetHeight = ProcessHeight;
+
+            // Calculate the aspect ratio of the original image and the target area
+            float imageAspectRatio = (float)width / height;
+            float targetAspectRatio = targetWidth / targetHeight;
+
+            float drawWidth, drawHeight;
+            float offsetX = 0, offsetY = 0;
+
+            if (imageAspectRatio > targetAspectRatio)
+            {
+                // Image is wider than the target area, fit to width
+                drawWidth = targetWidth;
+                drawHeight = targetWidth / imageAspectRatio;
+                offsetY = (targetHeight - drawHeight) / 2;
+            }
+            else
+            {
+                // Image is taller than the target area, fit to height
+                drawHeight = targetHeight;
+                drawWidth = targetHeight * imageAspectRatio;
+                offsetX = (targetWidth - drawWidth) / 2;
+            }
+
+            // Create the draw rectangle
+            var drawRect = new RectF(offsetX, offsetY, drawWidth, drawHeight);
+
+            // Set the drawable to the Canvas
+            CameraViewCanvas = new ImageDrawable(image, drawRect, -90);
         }
         #endregion
 

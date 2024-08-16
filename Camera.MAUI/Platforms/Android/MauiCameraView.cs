@@ -1,22 +1,21 @@
 ﻿using Android.Content;
+using Android.Content.Res;
+using Android.Graphics;
+using Android.Hardware.Camera2;
+using Android.Hardware.Camera2.Params;
+using Android.Media;
+using Android.OS;
+using Android.Runtime;
+using Android.Util;
+using Android.Views;
 using Android.Widget;
 using Java.Util.Concurrent;
-using Android.Graphics;
 using CameraCharacteristics = Android.Hardware.Camera2.CameraCharacteristics;
-using Android.Hardware.Camera2;
-using Android.Media;
-using Android.Views;
-using Android.Util;
-using Android.Hardware.Camera2.Params;
-using Size = Android.Util.Size;
 using Class = Java.Lang.Class;
 using Rect = Android.Graphics.Rect;
-using SizeF = Android.Util.SizeF;
-using Android.Runtime;
-using Android.OS;
-using Android.Renderscripts;
 using RectF = Android.Graphics.RectF;
-using Android.Content.Res;
+using Size = Android.Util.Size;
+using SizeF = Android.Util.SizeF;
 
 namespace Camera.MAUI.Platforms.Android;
 
@@ -240,7 +239,7 @@ internal class MauiCameraView: GridLayout
         var previewSurface = new Surface(texture);
         surfaces.Add(new OutputConfiguration(previewSurface));
         surfaces26.Add(previewSurface);
-        previewBuilder.AddTarget(previewSurface);
+        //previewBuilder.AddTarget(previewSurface);
         if (imgReader != null)
         {
             surfaces.Add(new OutputConfiguration(imgReader.Surface));

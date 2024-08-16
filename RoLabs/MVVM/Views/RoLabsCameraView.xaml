@@ -1,0 +1,126 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Rolabs.MVVM.Views.RoLabsCameraView"
+             xmlns:local="clr-namespace:Rolabs.MVVM.Helpers"
+             xmlns:customViews="clr-namespace:Rolabs.MVVM.CustomViews"
+             xmlns:cv="clr-namespace:Camera.MAUI;assembly=Camera.MAUI"
+             xmlns:mm="clr-namespace:MediaManager.Forms;assembly=MediaManager.Forms"
+             xmlns:views="clr-namespace:Rolabs.MVVM.Views"
+             >
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+        <Grid HorizontalOptions="Center" VerticalOptions="Center">
+            <!-- Define a single row and a single column -->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Wrapped CameraView in a Frame -->
+            <Frame
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="480"
+                HeightRequest="640"
+                HasShadow="True"
+                Padding="0"
+                Grid.Row="0" Grid.Column="0">
+                <!-- CameraView -->
+                <cv:CameraView x:Name="cameraView"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   WidthRequest="120"
+                   HeightRequest="160"
+                   Cameras="{Binding CameraViewModel.Cameras, Mode=OneWayToSource}"
+                   Camera="{Binding CameraViewModel.Camera}"
+                   AutoStartPreview="{Binding CameraViewModel.AutoStartPreview}"
+                   NumCamerasDetected="{Binding CameraViewModel.NumCameras, Mode=OneWayToSource}"/>
+            </Frame>
+
+            <Frame
+                BackgroundColor="Transparent"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="480"
+                HeightRequest="640"
+                HasShadow="True"
+                Padding="0"
+                Grid.Row="0" Grid.Column="0">
+                <GraphicsView
+                    WidthRequest="480"
+                    HeightRequest="640"
+                    Drawable="{Binding CameraViewModel.CameraViewCanvas}"
+                    Grid.Row="0" Grid.Column="0"
+                    ZIndex="1"/>
+            </Frame>
+
+            <Frame
+                BackgroundColor="Transparent"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="480"
+                HeightRequest="640"
+                HasShadow="True"
+                BorderColor="Green"
+                Padding="0"
+                Grid.Row="0" Grid.Column="0">
+                <!-- Image view for video -->
+            <customViews:DoubleBufferImage ImageSource="{Binding CameraViewModel.ImageSource}" 
+                        x:Name="doubleBufferImage" 
+                        IsVisible="{Binding CameraViewModel.UseCamera, Converter={StaticResource InverseBooleanConverter}}"
+                        WidthRequest="480" 
+                        Grid.Row="0" Grid.Column="0"/>
+            </Frame>
+
+            <!-- GraphicsView for overlay drawing (should be on top of everything) -->
+            <Frame
+                BackgroundColor="Transparent"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="480"
+                HeightRequest="640"
+                HasShadow="True"
+                BorderColor="Green"
+                Padding="0"
+                Grid.Row="0" Grid.Column="0">
+                <GraphicsView
+                WidthRequest="480"
+                HeightRequest="640"
+                Drawable="{Binding ComputerVisionViewModel.CameraViewCanvas}"
+                Grid.Row="0" Grid.Column="0"
+                ZIndex="1"/>
+            </Frame>
+
+        </Grid>
+
+        <HorizontalStackLayout HorizontalOptions="Center" Margin="5">
+            <Label Text="Select a camera:" VerticalOptions="Center" BackgroundColor="White" TextColor="Black"/>
+            <Picker VerticalOptions="Center" TextColor="Black" ItemsSource="{Binding CameraViewModel.Cameras}" SelectedItem="{Binding CameraViewModel.Camera,Mode=TwoWay}"/>
+        </HorizontalStackLayout>
+
+        <!--<HorizontalStackLayout HorizontalOptions="Center" Margin="2" Spacing="2">
+            <Label Text="Zoom" VerticalOptions="Center" TextColor="Black"/>
+            <Stepper BindingContext="{x:Reference cameraView}" Minimum="{Binding MinZoomFactor}" Maximum="7" Increment="0.5" Value="{Binding ZoomFactor,Mode=TwoWay}" />
+        </HorizontalStackLayout>-->
+
+        <HorizontalStackLayout HorizontalOptions="Center" Margin="5">
+            <Button Text="Start Camera" Command="{Binding CameraViewModel.StartCamera}" Margin="5"/>
+            <Button Text="Pause Camera" Command="{Binding CameraViewModel.PauseCamera}" Margin="5"/>
+            <Button Text="Stop Camera" Command="{Binding CameraViewModel.StopCamera}" Margin="5"/>
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout HorizontalOptions="Center">
+            <Label Text="Use Camera" VerticalOptions="Center" BackgroundColor="White" TextColor="Black"/>
+            <!-- CheckBox for toggling camera use -->
+            <CheckBox IsChecked="{Binding CameraViewModel.UseCamera}" HorizontalOptions="Center"/>
+        </HorizontalStackLayout>
+
+    </VerticalStackLayout>
+</ContentView>
