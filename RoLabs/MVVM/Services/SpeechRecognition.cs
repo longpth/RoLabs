@@ -12,6 +12,7 @@ namespace Rolabs.MVVM.Services
         private string _modelPath;
         private string _vocabPath;
         private Whisper _mWhisper;
+        private string _testedAudio;
 
         public SpeechRecognition()
         {
@@ -23,11 +24,14 @@ namespace Rolabs.MVVM.Services
             // English-only model and vocab paths
             _modelPath = await Utils.CopyFileToAppDataDirectory2("aimodels\\whisper-tiny-en.tflite");
             _vocabPath = await Utils.CopyFileToAppDataDirectory2("filters_vocab_en.bin");
+            _testedAudio = await Utils.CopyFileToAppDataDirectory2("audiotemp.wav");
+
             Debug.WriteLine("Speech recognition coppied files completed");
 
             _mWhisper = new Whisper();
             _mWhisper.LoadModel(_modelPath, _vocabPath, isMultilingual: false);
             _mWhisper.SetListener(new WhisperListener());
+            StartTranscription(_testedAudio);
         }
 
         // Transcription calls
@@ -49,7 +53,7 @@ namespace Rolabs.MVVM.Services
 
             public void OnUpdateReceived(string message)
             {
-                Log.Debug(TAG, "Update received, Message: " + message);
+                Debug.WriteLine(TAG, "Update received, Message: " + message);
 
                 // Update your UI with the new status
                 // Assuming you're on a platform where you have a way to update the UI
@@ -58,18 +62,18 @@ namespace Rolabs.MVVM.Services
                 if (message.Equals(Whisper.MsgProcessing))
                 {
                     // Clear the result view (pseudo code, adjust to your environment)
-                    // tvResult.Text = string.Empty;
+                    Debug.WriteLine(TAG, "Processing ...");
                 }
                 else if (message.Equals(Whisper.MsgFileNotFound))
                 {
-                    Log.Debug(TAG, "File not found error...!");
+                    Debug.WriteLine(TAG, "File not found error...!");
                     // Handle the file not found error as needed
                 }
             }
 
             public void OnResultReceived(string result)
             {
-                Log.Debug(TAG, "Result: " + result);
+                Debug.WriteLine(TAG, "Result: " + result);
                 // Append the result to your result view (pseudo code, adjust to your environment)
                 // tvResult.Append(result);
             }

@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camera.MAUI", "Camera.MAUI\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WhisperSharp.Android", "WhisperSharp.Android\WhisperSharp.Android.vcxproj", "{7E87442C-9C77-4D80-83B7-75F347DE6E87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhisperSharp", "WhisperSharp\WhisperSharp.csproj", "{D5F4A6A5-2D14-4144-A5EA-1940949B65E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WhisperSharp", "WhisperSharp\WhisperSharp.csproj", "{D5F4A6A5-2D14-4144-A5EA-1940949B65E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.Maui.Audio", "Plugin.Maui.Audio\src\Plugin.Maui.Audio\Plugin.Maui.Audio.csproj", "{ED0043A2-601A-4598-800F-27D5A9832708}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -231,6 +233,36 @@ Global
 		{D5F4A6A5-2D14-4144-A5EA-1940949B65E5}.Release-JP|x64.Build.0 = Release|Any CPU
 		{D5F4A6A5-2D14-4144-A5EA-1940949B65E5}.Release-JP|x86.ActiveCfg = Release|Any CPU
 		{D5F4A6A5-2D14-4144-A5EA-1940949B65E5}.Release-JP|x86.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|ARM.Build.0 = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|x64.Build.0 = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Debug|x86.Build.0 = Debug|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|ARM.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|ARM.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|ARM64.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|x64.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|x64.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|x86.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release|x86.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|Any CPU.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|Any CPU.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|ARM.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|ARM.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|ARM64.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|ARM64.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|x64.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|x64.Build.0 = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|x86.ActiveCfg = Release|Any CPU
+		{ED0043A2-601A-4598-800F-27D5A9832708}.Release-JP|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

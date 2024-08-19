@@ -93,7 +93,6 @@
 	  <PackageReference Include="Microsoft.ML.ImageAnalytics" Version="3.0.1" />
 	  <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.18.1" />
 	  <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="3.0.1" />
-	  <PackageReference Include="Plugin.Maui.Audio" Version="3.0.0" />
 	  <PackageReference Include="Plugin.MediaManager" Version="1.2.2" />
 	  <PackageReference Include="Plugin.MediaManager.Forms" Version="1.2.2" />
 	  <PackageReference Include="SkiaSharp" Version="2.88.8" />
@@ -103,6 +102,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Camera.MAUI\Camera.MAUI.csproj" />
 	  <ProjectReference Include="..\OpenCvSharp\OpenCvSharp.csproj" />
+	  <ProjectReference Include="..\Plugin.Maui.Audio\src\Plugin.Maui.Audio\Plugin.Maui.Audio.csproj" />
 	  <ProjectReference Include="..\WhisperSharp\WhisperSharp.csproj" />
 	</ItemGroup>
 

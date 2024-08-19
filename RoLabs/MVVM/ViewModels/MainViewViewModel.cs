@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Timers;
 using Rolabs.MVVM.Services;
 using Plugin.Maui.Audio;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
+using Rolabs.MVVM.Helpers;
 
 namespace Rolabs.MVVM.ViewModels
 {
@@ -14,6 +16,7 @@ namespace Rolabs.MVVM.ViewModels
         private bool _isMicOn;
         private static Timer _aTimer;
         private SpeechRecognition _speechRecognition;
+        private string _wavPath;
 
         // Singleton instance
         private static MainViewViewModel instance = null;
@@ -55,12 +58,40 @@ namespace Rolabs.MVVM.ViewModels
             }
         }
 
-        //public Command MicToggleCommand { get; }
+        private async void StartRecording()
+        {
+            if (await Permissions.RequestAsync<Permissions.Microphone>() != PermissionStatus.Granted)
+            {
+                // TODO Inform your user
+                return;
+            }
 
-        private void ToggleMic()
+            if (!AudioRecorder.IsRecording)
+            {
+                AudioRecordingOptions options = new AudioRecordingOptions();
+                options.SampleRate = 16000;
+                await AudioRecorder.StartAsync(options);
+            }
+        }
+
+        private async void StopRecording()
+        {
+            if (AudioRecorder.IsRecording)
+            {
+                var recordedAudio = await AudioRecorder.StopAsync();
+                if (recordedAudio != null)
+                {
+                    var stream = recordedAudio.GetAudioStream();
+                    _wavPath = await Utils.SaveFile(stream, "voice.wav");
+                }
+            }
+        }
+
+        private async void ToggleMic()
         {
             if (_isMicOn)
             {
+                StartRecording();
                 SetTimer();
             }
             else
@@ -91,6 +122,10 @@ namespace Rolabs.MVVM.ViewModels
 
                 Console.WriteLine("The timer was stopped at {0:HH:mm:ss.fff}", DateTime.Now);
             }
+
+            StopRecording();
+
+            _speechRecognition.StartTranscription(_wavPath);
         }
 
         private void OnTimedEvent(Object source, ElapsedEventArgs e)

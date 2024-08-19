@@ -19,7 +19,7 @@ namespace WhisperSharp
         private readonly object _audioBufferQueueLock = new object();
         private readonly object _whisperEngineLock = new object();
         private readonly Queue<float[]> _audioBufferQueue = new Queue<float[]>();
-        private readonly IWhisperEngine _whisperEngine = new WhisperEngine();
+        private readonly IWhisperEngine _whisperEngine = new WhisperEngineNative();
 
         private Thread _micTranscribeThread = null;
         private string _action = null;
@@ -45,7 +45,7 @@ namespace WhisperSharp
                 _whisperEngine.Initialize(modelPath, vocabPath, isMultilingual);
 
                 // Start thread for mic data transcription in real-time
-                StartMicTranscriptionThread();
+                //StartMicTranscriptionThread();
             }
             catch (IOException e)
             {
