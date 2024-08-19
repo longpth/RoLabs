@@ -1,13 +1,19 @@
 ﻿using System.Diagnostics;
+using Android.Media;
+using Plugin.Maui.Audio;
 using Rolabs.MVVM.ViewModels;
+using Rolabs.MVVM.Views;
 
 namespace Rolabs
 {
     public partial class MainPage : ContentPage
     {
-        public MainPage()
+
+        public MainPage(IAudioManager audioManager)
         {
             InitializeComponent();
+            MainViewViewModel.Instance.AudioManager = audioManager;
+            MainViewViewModel.Instance.AudioRecorder = audioManager.CreateRecorder();
         }
 
         protected override void OnAppearing()
@@ -15,5 +21,6 @@ namespace Rolabs
             base.OnAppearing();
             CameraViewModel.Instance.Dispose();
         }
+
     }
 }

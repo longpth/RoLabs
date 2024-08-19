@@ -1,6 +1,8 @@
 ﻿using Android.Graphics;
 using Java.Nio;
 using Microsoft.Maui.Graphics.Platform;
+using OpenCvSharp;
+using SkiaSharp;
 using IImage = Microsoft.Maui.Graphics.IImage;
 
 namespace Rolabs.MVVM.Helpers
@@ -38,6 +40,50 @@ namespace Rolabs.MVVM.Helpers
             }
         }
 
+    }
+
+    public static class MatExtensions
+    {
+        public static ImageSource ToImageSource(this Mat mat, string format = ".jpg")
+        {
+            // Convert Mat to byte array
+            byte[] imageData = mat.ToBytes(format);
+
+            // Create a MemoryStream from the byte array
+            var imageStream = new MemoryStream(imageData);
+
+            var imageSource = ImageSource.FromStream(() => imageStream);
+
+            return imageSource;
+        }
+        public static SKBitmap ToSKBitmap(this Mat mat)
+        {
+            using (var stream = new MemoryStream())
+            {
+                mat.WriteToStream(stream);
+                stream.Seek(0, SeekOrigin.Begin);
+                return SKBitmap.Decode(stream);
+            }
+        }
+    }
+
+    public class SKBitmapImageSource : StreamImageSource
+    {
+        public SKBitmap Bitmap { get; }
+
+        public SKBitmapImageSource(SKBitmap bitmap)
+        {
+            Bitmap = bitmap;
+            Stream = GetStreamAsync;
+        }
+
+        private Task<Stream> GetStreamAsync(CancellationToken cancellationToken)
+        {
+            var stream = new MemoryStream();
+            Bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
+            stream.Seek(0, SeekOrigin.Begin);
+            return Task.FromResult<Stream>(stream);
+        }
     }
 
 }

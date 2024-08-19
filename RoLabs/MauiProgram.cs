@@ -8,6 +8,8 @@ using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.Compatibility.Hosting;
 using MediaManager.Platforms.Android.Video;
+using Plugin.Maui.Audio;
+using Android.Media;
 
 namespace Rolabs
 {
@@ -36,6 +38,9 @@ namespace Rolabs
                             handlers.AddCompatibilityRenderer(typeof(VideoView), typeof(MediaManager.Forms.Platforms.iOS.VideoViewRenderer));
 #endif
                         });
+
+            builder.Services.AddSingleton(Plugin.Maui.Audio.AudioManager.Current);
+            builder.Services.AddTransient<MainPage>();
 
             var app = builder.Build();
 

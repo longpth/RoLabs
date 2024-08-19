@@ -15,16 +15,22 @@ namespace RoLabs.MVVM.Services
     {
         private static ObjectDetection _instance;
         private static readonly object _lock = new object();
-        private static string _modelPath;
+        private string _modelPath;
 
-        private readonly MLContext mlContext;
-        private readonly ITransformer _transformer;
+        private _mlContext _mlContext;
+        private ITransformer _transformer;
         private IList<YoloBoundingBox> _boundingBoxes = new List<YoloBoundingBox>();
 
         // Private constructor to prevent direct instantiation
         private ObjectDetection()
         {
-            this.mlContext = new MLContext();
+            InitializeAsync();
+        }
+
+        private async void InitializeAsync()
+        {
+            _modelPath = await Utils.CopyFileToAppDataDirectory("aimodels\\tinyyolov2-8.onnx");
+            _mlContext = new MLContext();
             _transformer = LoadModel(_modelPath);
         }
 
@@ -37,7 +43,6 @@ namespace RoLabs.MVVM.Services
                 {
                     if (_instance == null)
                     {
-                        _modelPath = Utils.CopyFileToAppDataDirectory("models//tinyyolov2-8.onnx").GetAwaiter().GetResult();
                         _instance = new ObjectDetection();
                     }
                 }
@@ -73,17 +78,17 @@ namespace RoLabs.MVVM.Services
             Console.WriteLine($"Default parameters: image size=({ImageNetSettings.imageWidth},{ImageNetSettings.imageHeight})");
 
             // Dummy data to fit the pipeline
-            var data = mlContext.Data.LoadFromEnumerable(new List<ImageNetData>());
+            var data = _mlContext.Data.LoadFromEnumerable(new List<ImageNetData>());
 
-            var pipeline = mlContext.Transforms.ResizeImages(
+            var pipeline = _mlContext.Transforms.ResizeImages(
                                 outputColumnName: "imageResized",
                                 imageWidth: ImageNetSettings.imageWidth,
                                 imageHeight: ImageNetSettings.imageHeight,
                                 inputColumnName: nameof(ImageNetData.Image))
-                            .Append(mlContext.Transforms.ExtractPixels(
+                            .Append(_mlContext.Transforms.ExtractPixels(
                                 outputColumnName: TinyYoloModelSettings.ModelInput,
                                 inputColumnName: "imageResized"))
-                            .Append(mlContext.Transforms.ApplyOnnxModel(
+                            .Append(_mlContext.Transforms.ApplyOnnxModel(
                                 modelFile: modelLocation,
                                 outputColumnNames: new[]
                                 {
@@ -135,7 +140,7 @@ namespace RoLabs.MVVM.Services
             var imageList = new List<ImageNetData> { imageRecord };
 
             // Load the data into an IDataView
-            var data = mlContext.Data.LoadFromEnumerable(imageList);
+            var data = _mlContext.Data.LoadFromEnumerable(imageList);
 
             return PredictDataUsingModel(data, _transformer);
         }

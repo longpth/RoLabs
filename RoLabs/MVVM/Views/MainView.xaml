@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Rolabs.MVVM.CustomViews"
+             x:Class="Rolabs.MVVM.Views.MainView">
+
+    <VerticalStackLayout VerticalOptions="Center" Spacing="20">
+
+        <!-- Image for the Robot Face -->
+        <Image x:Name="RobotFaceImage"
+               Source="robot_face_image.svg"
+               WidthRequest="200"
+               HeightRequest="200"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"/>
+
+        <Frame
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="200"
+                HeightRequest="200"
+                BorderColor="Transparent">
+                <!-- Custom Mic Toggle Button -->
+                <local:MicToggleButton IsListening="{Binding IsMicOn, Mode=TwoWay}"
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Center" 
+                                   ButtonWidthRequest="100"
+                                   ButtonHeightRequest="100"
+                                   />
+        </Frame>
+
+        <!-- Label to Display ASR Data -->
+        <Label x:Name="ASRDataLabel"
+               Text="ASR Data will appear here"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               FontSize="Medium"
+               TextColor="Black"
+               Padding="10"/>
+    </VerticalStackLayout>
+</ContentView>

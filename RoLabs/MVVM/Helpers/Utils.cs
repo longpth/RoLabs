@@ -18,49 +18,29 @@ namespace Rolabs.MVVM.Helpers
             await inputStream.CopyToAsync(outputStream);
             return targetFile;
         }
-    }
-    public static class MatExtensions
-    {
-        public static ImageSource ToImageSource(this Mat mat, string format = ".jpg")
+
+        public static async Task<string> CopyFileToAppDataDirectory2(string filename)
         {
-            // Convert Mat to byte array
-            byte[] imageData = mat.ToBytes(format);
+            // Create the target file path in the AppDataDirectory
+            string targetFile = System.IO.Path.Combine(FileSystem.Current.AppDataDirectory, filename);
 
-            // Create a MemoryStream from the byte array
-            var imageStream = new MemoryStream(imageData);
-
-            var imageSource = ImageSource.FromStream(() => imageStream);
-
-            return imageSource;
-        }
-        public static SKBitmap ToSKBitmap(this Mat mat)
-        {
-            using (var stream = new MemoryStream())
+            // Check if the file already exists
+            if (File.Exists(targetFile))
             {
-                mat.WriteToStream(stream);
-                stream.Seek(0, SeekOrigin.Begin);
-                return SKBitmap.Decode(stream);
+                // If the file exists, return the path without copying
+                return targetFile;
             }
+
+            // Open the source file
+            using Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(filename);
+
+            // Copy the file to the AppDataDirectory
+            using FileStream outputStream = File.Create(targetFile);
+            await inputStream.CopyToAsync(outputStream);
+
+            return targetFile;
         }
+
+
     }
-
-    public class SKBitmapImageSource : StreamImageSource
-    {
-        public SKBitmap Bitmap { get; }
-
-        public SKBitmapImageSource(SKBitmap bitmap)
-        {
-            Bitmap = bitmap;
-            Stream = GetStreamAsync;
-        }
-
-        private Task<Stream> GetStreamAsync(CancellationToken cancellationToken)
-        {
-            var stream = new MemoryStream();
-            Bitmap.Encode(stream, SKEncodedImageFormat.Png, 100);
-            stream.Seek(0, SeekOrigin.Begin);
-            return Task.FromResult<Stream>(stream);
-        }
-    }
-
 }

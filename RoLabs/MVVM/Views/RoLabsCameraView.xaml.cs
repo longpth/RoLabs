@@ -4,14 +4,14 @@ namespace Rolabs.MVVM.Views;
 
 public partial class RoLabsCameraView : ContentView
 {
-    private MainViewModel _mainViewModel = new MainViewModel();
+    private MainVisionViewModel _mainVisionViewModel = new MainVisionViewModel();
 
     public RoLabsCameraView()
     {
         InitializeComponent();
 
-        BindingContext = _mainViewModel;
-        cameraView.RegisterImageGrabbedCallback(_mainViewModel.CameraViewModel.GrabImage);
-        cameraView.RegisterImageGrabbedCallback(_mainViewModel.ComputerVisionViewModel.GrabImage);
+        BindingContext = _mainVisionViewModel;
+        cameraView.RegisterImageGrabbedCallback(_mainVisionViewModel.CameraViewModel.GrabImage);
+        cameraView.RegisterImageGrabbedCallback(_mainVisionViewModel.ComputerVisionViewModel.GrabImage);
     }
 }
