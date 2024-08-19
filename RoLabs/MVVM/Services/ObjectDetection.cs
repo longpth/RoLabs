@@ -17,7 +17,7 @@ namespace RoLabs.MVVM.Services
         private static readonly object _lock = new object();
         private string _modelPath;
 
-        private _mlContext _mlContext;
+        private MLContext _mlContext;
         private ITransformer _transformer;
         private IList<YoloBoundingBox> _boundingBoxes = new List<YoloBoundingBox>();
 

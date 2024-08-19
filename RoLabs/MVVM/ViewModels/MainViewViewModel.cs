@@ -61,10 +61,6 @@ namespace Rolabs.MVVM.ViewModels
         {
             if (_isMicOn)
             {
-                //if(_speechRecognition == null)
-                //{
-                //    _speechRecognition = new SpeechRecognition();
-                //}
                 SetTimer();
             }
             else
