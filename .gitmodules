@@ -1,0 +1,3 @@
+[submodule "Plugin.Maui.Audio"]
+	path = Plugin.Maui.Audio
+	url = git@github.com:longpth/Plugin.Maui.Audio.git
