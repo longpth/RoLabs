@@ -17,6 +17,7 @@ namespace Rolabs.MVVM.ViewModels
         private static Timer _aTimer;
         private SpeechRecognition _speechRecognition;
         private string _wavPath;
+        private string _speechRecognitionResult;
 
         // Singleton instance
         private static MainViewViewModel instance = null;
@@ -37,8 +38,7 @@ namespace Rolabs.MVVM.ViewModels
         {
             //MicToggleCommand = new Command(ToggleMic);
 
-
-            _speechRecognition = new SpeechRecognition();
+            _speechRecognition = new SpeechRecognition(SpeechRecognitionAvailable);
         }
 
         public IAudioManager AudioManager { get; set; }
@@ -100,6 +100,19 @@ namespace Rolabs.MVVM.ViewModels
             }
         }
 
+        public string SpeechRecognitionResult
+        {
+            get => _speechRecognitionResult;
+            set
+            {
+                if (_speechRecognitionResult != value)
+                {
+                    _speechRecognitionResult = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private void SetTimer()
         {
             // Create a timer with a 15-second interval.
@@ -135,6 +148,11 @@ namespace Rolabs.MVVM.ViewModels
             StopTimer();
 
             Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}", e.SignalTime);
+        }
+
+        private void SpeechRecognitionAvailable(string result)
+        {
+            SpeechRecognitionResult = result;
         }
     }
 }

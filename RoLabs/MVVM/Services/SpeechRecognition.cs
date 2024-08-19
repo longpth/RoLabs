@@ -14,8 +14,13 @@ namespace Rolabs.MVVM.Services
         private Whisper _mWhisper;
         private string _testedAudio;
 
-        public SpeechRecognition()
+        public delegate void SpeechRecognitionResultCallback(string result);
+
+        private SpeechRecognitionResultCallback _resultAvailableCallback { set; get; }
+
+        public SpeechRecognition(SpeechRecognitionResultCallback resultCallback=null)
         {
+            _resultAvailableCallback = resultCallback;
             InitializeAsync();
         }
 
@@ -30,7 +35,11 @@ namespace Rolabs.MVVM.Services
 
             _mWhisper = new Whisper();
             _mWhisper.LoadModel(_modelPath, _vocabPath, isMultilingual: false);
-            _mWhisper.SetListener(new WhisperListener());
+
+            var listener = new WhisperListener();
+            listener.Callback = _resultAvailableCallback;
+
+            _mWhisper.SetListener(listener);
             StartTranscription(_testedAudio);
         }
 
@@ -50,6 +59,8 @@ namespace Rolabs.MVVM.Services
         private class WhisperListener : IWhisperListener
         {
             private static readonly string TAG = nameof(WhisperListener);
+
+            public SpeechRecognitionResultCallback Callback { set; get; }
 
             public void OnUpdateReceived(string message)
             {
@@ -73,9 +84,11 @@ namespace Rolabs.MVVM.Services
 
             public void OnResultReceived(string result)
             {
+                if(Callback != null)
+                {
+                    Callback(result);
+                }
                 Debug.WriteLine(TAG, "Result: " + result);
-                // Append the result to your result view (pseudo code, adjust to your environment)
-                // tvResult.Append(result);
             }
         }
     }

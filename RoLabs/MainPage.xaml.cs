@@ -22,5 +22,11 @@ namespace Rolabs
             CameraViewModel.Instance.Dispose();
         }
 
+        private async void OnVisionButtonClicked(object sender, EventArgs e)
+        {
+            // Navigate to the VisionPage
+            await Navigation.PushAsync(new VisionPage());
+        }
+
     }
 }

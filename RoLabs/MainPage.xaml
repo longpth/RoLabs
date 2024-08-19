@@ -4,15 +4,12 @@
              xmlns:views="clr-namespace:Rolabs.MVVM.Views;assembly=Rolabs"
              x:Class="Rolabs.MainPage">
 
-    <!--<ScrollView>
-        <StackLayout Orientation="Vertical" HorizontalOptions="Center" VerticalOptions="Center">
-            <views:RoLabsCameraView />
-        </StackLayout>
-    </ScrollView>-->
-
     <ScrollView>
         <VerticalStackLayout VerticalOptions="Center" Spacing="20">
             <views:MainView x:Name="MainView" />
+            <!-- Button to navigate to VisionPage -->
+            <Button Text="Vision"
+                Clicked="OnVisionButtonClicked" />
         </VerticalStackLayout>
     </ScrollView>
 

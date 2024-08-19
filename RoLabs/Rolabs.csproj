@@ -76,10 +76,13 @@
 	  <MauiXaml Update="MVVM\CustomViews\MicToggleButton.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="MVVM\Views\MainView.xaml">
+	  <MauiXaml Update="MVVM\Views\ContentView\MainView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="MVVM\Views\RoLabsCameraView.xaml">
+	  <MauiXaml Update="MVVM\Views\ContentView\RoLabsCameraView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="MVVM\Views\ContentPage\VisionPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
@@ -113,7 +116,7 @@
 	  <Compile Update="MVVM\CustomViews\MicToggleButton.xaml.cs">
 	    <DependentUpon>MicToggleButton.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="MVVM\Views\RoLabsCameraView.xaml.cs">
+	  <Compile Update="MVVM\Views\ContentView\RoLabsCameraView.xaml.cs">
 	    <DependentUpon>RoLabsCameraView.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="NewFolder\Cv2\Cv2.cs">
