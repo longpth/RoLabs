@@ -7,11 +7,6 @@ namespace Rolabs.MVVM.CustomViews
     {
         private readonly List<PointF> _points;
 
-        public PointsDrawable()
-        {
-
-        }
-
         public PointsDrawable(List<PointF> points)
         {
             _points = points ?? new List<PointF>();

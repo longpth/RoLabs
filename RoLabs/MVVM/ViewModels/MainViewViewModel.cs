@@ -8,6 +8,7 @@ using Rolabs.MVVM.Services;
 using Plugin.Maui.Audio;
 using Microsoft.Maui.ApplicationModel.DataTransfer;
 using Rolabs.MVVM.Helpers;
+using System.Runtime.InteropServices;
 
 namespace Rolabs.MVVM.ViewModels
 {
@@ -39,6 +40,7 @@ namespace Rolabs.MVVM.ViewModels
             //MicToggleCommand = new Command(ToggleMic);
 
             _speechRecognition = new SpeechRecognition(SpeechRecognitionAvailable);
+
         }
 
         public IAudioManager AudioManager { get; set; }
@@ -82,7 +84,7 @@ namespace Rolabs.MVVM.ViewModels
                 if (recordedAudio != null)
                 {
                     var stream = recordedAudio.GetAudioStream();
-                    _wavPath = await Utils.SaveFile(stream, "voice.wav");
+                    _wavPath = await Utils.SaveAudioFile(stream, "voice.wav");
                 }
             }
         }

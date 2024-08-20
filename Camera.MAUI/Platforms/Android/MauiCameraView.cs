@@ -21,7 +21,7 @@ namespace Camera.MAUI.Platforms.Android;
 
 public class MauiCameraViewCallBack
 {
-    public delegate void ImageAvailableEventHandler(byte[] imageData, int width, int height);
+    public delegate Task ImageAvailableEventHandler(byte[] imageData, int width, int height);
 }
 
 internal class MauiCameraView: GridLayout
@@ -142,7 +142,21 @@ internal class MauiCameraView: GridLayout
                     cameraInfo.AvailableResolutions.Add(new(352, 288));
                 }
                 cameraView.Cameras.Add(cameraInfo);
-                }
+            }
+
+            // Sort the cameras based on the desired order: Front, Back, and then others.
+            var sortedCameras = cameraView.Cameras
+                .OrderByDescending(c => c.Position == CameraPosition.Front)
+                .ThenByDescending(c => c.Position == CameraPosition.Back)
+                .ToList();
+
+            // Clear the original collection and repopulate it with the sorted items
+            cameraView.Cameras.Clear();
+            foreach (var camera in sortedCameras)
+            {
+                cameraView.Cameras.Add(camera);
+            }
+
             if (OperatingSystem.IsAndroidVersionAtLeast(30))
             {
                 cameraView.Microphones.Clear();
@@ -307,7 +321,8 @@ internal class MauiCameraView: GridLayout
                         var maxVideoSize = ChooseMaxVideoSize(map.GetOutputSizes(Class.FromType(typeof(ImageReader))));
                         if (PhotosResolution.Width != 0 && PhotosResolution.Height != 0)
                             maxVideoSize = new((int)PhotosResolution.Width, (int)PhotosResolution.Height);
-                        imgReader = ImageReader.NewInstance(maxVideoSize.Width, maxVideoSize.Height, ImageFormatType.Jpeg, 2);
+                        //imgReader = ImageReader.NewInstance(maxVideoSize.Width, maxVideoSize.Height, ImageFormatType.Jpeg, 2);
+                        imgReader = ImageReader.NewInstance(videoSize.Width, videoSize.Height, ImageFormatType.Jpeg, 2);
                         backgroundThread = new HandlerThread("CameraBackground");
                         backgroundThread.Start();
                         backgroundHandler = new Handler(backgroundThread.Looper);

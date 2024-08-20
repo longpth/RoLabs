@@ -425,6 +425,14 @@ public class CameraView : View, ICameraView
     /// </summary>
     public async Task<CameraResult> StartCameraAsync(Size Resolution = default)
     {
+
+        //// Updated 2024/08/19 >>>>>>>>>>>
+        //if (Resolution == default)
+        //{
+        //    Resolution = new Size(640, 480);
+        //}
+        //// Updated 2024/08/19 <<<<<<<<<<<
+
         CameraResult result = CameraResult.AccessError;
         if (Camera != null)
         {

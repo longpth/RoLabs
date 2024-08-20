@@ -25,7 +25,7 @@ namespace Rolabs.MVVM.ViewModels
     public enum CameraState { Start, Stop, Pause };
     public class CameraViewModel : BaseViewModel, IDisposable
     {
-        private readonly int ProcessWidth=480, ProcessHeight=640;
+        public readonly int ProcessWidth=480, ProcessHeight=640;
         private readonly int CaptureWaitTime = 33; // milliseconds
 
         private static CameraViewModel instance = null;
@@ -103,21 +103,6 @@ namespace Rolabs.MVVM.ViewModels
             }
         }
 
-        private ImageSource _imageSourceCamera;
-
-        public ImageSource ImageSourceCamera
-        {
-            get => _imageSourceCamera;
-            set
-            {
-                if (_imageSourceCamera != value)
-                {
-                    _imageSourceCamera = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         private IDrawable _cameraViewCanvas;
         public IDrawable CameraViewCanvas
         {
@@ -138,7 +123,6 @@ namespace Rolabs.MVVM.ViewModels
         private Mat _frame;
         private Mat _frameTransposed;
         private Mat _frameResized;
-        private Mat _frameProcessed;
         private string _videoPath;
         private CancellationTokenSource _cancellationTokenSource;
         private Task _readVideoTask;
@@ -167,7 +151,6 @@ namespace Rolabs.MVVM.ViewModels
             _videoCapture = new VideoCapture(_videoPath);
             _frame = new Mat();
             _frameResized = new Mat();
-            _frameProcessed = new Mat();
             _frameTransposed = new Mat();
             _videoCapture.Read(_frame);
         }
@@ -202,18 +185,11 @@ namespace Rolabs.MVVM.ViewModels
                         break;
                     }
 
-                    // Process the captured frame
-                    ImageProcessing.DrawFeatureExtraction(_frameResized).CopyTo(_frameProcessed);
+                    ComputerVisionViewModel.Instance.GrabImageFromVideo(_frameResized);
 
-                    // Create a new SKBitmap from the processed frame
-                    var imageSource = _frameProcessed.ToImageSource();
+                    //Cv2.Resize(_frameResized, _frameResized, new OpenCvSharp.Size(ProcessWidth * DeviceDisplay.Current.MainDisplayInfo.Density, ProcessHeight * DeviceDisplay.Current.MainDisplayInfo.Density));
 
-                    // Update the ImageSource property with the new SKBitmap on the main thread
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        // Set the new ImageSource
-                        ImageSource = imageSource;
-                    });
+                    await GrabImageAsync(_frameResized.ToBytes(), _frameResized.Width, _frameResized.Height);
                 }
 
                 // Wait for a short delay before capturing the next frame
@@ -280,8 +256,6 @@ namespace Rolabs.MVVM.ViewModels
             OnPropertyChanged(nameof(StartCamera));
             OnPropertyChanged(nameof(StopCamera));
 
-            CameraViewCanvas = new PointsDrawable();
-
             InitializeAsync();
         }
         #endregion
@@ -329,43 +303,61 @@ namespace Rolabs.MVVM.ViewModels
         }
 
         // The method to process the image data
-        public void GrabImage(byte[] imageData, int width, int height)
+        public async Task GrabImageAsync(byte[] imageData, int width, int height)
         {
-            // Handle the image data (e.g., display or process it)
-            System.Diagnostics.Debug.WriteLine($"[CameraViewModel] Received image data with length: {imageData.Length} {width}x{height}");
-            IImage image = ImageConverter.LoadImageFromByteArray(imageData);
-
-            // Assume the target width and height are the dimensions of the GraphicsView
-            float targetWidth = ProcessWidth;
-            float targetHeight = ProcessHeight;
-
-            // Calculate the aspect ratio of the original image and the target area
-            float imageAspectRatio = (float)width / height;
-            float targetAspectRatio = targetWidth / targetHeight;
-
-            float drawWidth, drawHeight;
-            float offsetX = 0, offsetY = 0;
-
-            if (imageAspectRatio > targetAspectRatio)
+            byte[] clonedImageData = (byte[])imageData.Clone();
+            await Task.Run(() =>
             {
-                // Image is wider than the target area, fit to width
-                drawWidth = targetWidth;
-                drawHeight = targetWidth / imageAspectRatio;
-                offsetY = (targetHeight - drawHeight) / 2;
-            }
-            else
-            {
-                // Image is taller than the target area, fit to height
-                drawHeight = targetHeight;
-                drawWidth = targetHeight * imageAspectRatio;
-                offsetX = (targetWidth - drawWidth) / 2;
-            }
+                // Handle the image data (e.g., display or process it)
+                System.Diagnostics.Debug.WriteLine($"[CameraViewModel] Received image data with length: {imageData.Length} {width}x{height}");
+                IImage image = ImageConverter.LoadImageFromByteArray(clonedImageData);
 
-            // Create the draw rectangle
-            var drawRect = new RectF(offsetX, offsetY, drawWidth, drawHeight);
+                // Assume the target width and height are the dimensions of the GraphicsView
+                float targetWidth = ProcessWidth;
+                float targetHeight = ProcessHeight;
 
-            // Set the drawable to the Canvas
-            CameraViewCanvas = new ImageDrawable(image, drawRect, -90);
+                // Calculate the aspect ratio of the original image and the target area
+                float imageAspectRatio = (float)width / height;
+                float targetAspectRatio = targetWidth / targetHeight;
+
+                float drawWidth, drawHeight;
+                float offsetX = 0, offsetY = 0;
+
+                if (imageAspectRatio > targetAspectRatio)
+                {
+                    // Image is wider than the target area, fit to width
+                    drawWidth = targetWidth;
+                    drawHeight = targetWidth / imageAspectRatio;
+                    offsetY = (targetHeight - drawHeight) / 2;
+                }
+                else
+                {
+                    // Image is taller than the target area, fit to height
+                    drawHeight = targetHeight;
+                    drawWidth = targetHeight * imageAspectRatio;
+                    offsetX = (targetWidth - drawWidth) / 2;
+                }
+
+                // Create the draw rectangle
+                var drawRect = new RectF(offsetX, offsetY, drawWidth, drawHeight);
+
+                // Update the UI using Dispatcher.Dispatch
+                Application.Current?.Dispatcher.Dispatch(() =>
+                {
+                    if(UseCamera == false)
+                    {
+                        CameraViewCanvas = new ImageDrawable(image, drawRect);
+                    }
+                    else if (Camera.Name.Contains("Front"))
+                    {
+                        CameraViewCanvas = new ImageDrawable(image, drawRect, -90);
+                    }
+                    else if (Camera.Name.Contains("Back"))
+                    {
+                        CameraViewCanvas = new ImageDrawable(image, drawRect, 90);
+                    }
+                });
+            });
         }
         #endregion
 
@@ -382,7 +374,6 @@ namespace Rolabs.MVVM.ViewModels
             _videoCapture?.Release();
             _videoCapture?.Dispose();
             _frame?.Dispose();
-            _frameProcessed?.Dispose();
         }
         #endregion
 

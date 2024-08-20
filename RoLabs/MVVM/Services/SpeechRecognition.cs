@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Android.Util; // Assuming you're using Android for logging
 using Rolabs.MVVM.Helpers;
@@ -26,34 +27,44 @@ namespace Rolabs.MVVM.Services
 
         private async void InitializeAsync()
         {
-            // English-only model and vocab paths
-            _modelPath = await Utils.CopyFileToAppDataDirectory2("aimodels\\whisper-tiny-en.tflite");
-            _vocabPath = await Utils.CopyFileToAppDataDirectory2("filters_vocab_en.bin");
-            _testedAudio = await Utils.CopyFileToAppDataDirectory2("audiotemp.wav");
+            if (RuntimeInformation.OSArchitecture != Architecture.X64)
+            {
+                // English-only model and vocab paths
+                _modelPath = await Utils.CopyFileToAppDataDirectory2("aimodels\\whisper-tiny-en.tflite");
+                _vocabPath = await Utils.CopyFileToAppDataDirectory2("filters_vocab_en.bin");
 
-            Debug.WriteLine("Speech recognition coppied files completed");
+                Debug.WriteLine("Speech recognition coppied files completed");
 
-            _mWhisper = new Whisper();
-            _mWhisper.LoadModel(_modelPath, _vocabPath, isMultilingual: false);
+                _mWhisper = new Whisper();
+                _mWhisper.LoadModel(_modelPath, _vocabPath, isMultilingual: false);
 
-            var listener = new WhisperListener();
-            listener.Callback = _resultAvailableCallback;
+                var listener = new WhisperListener();
+                listener.Callback = _resultAvailableCallback;
 
-            _mWhisper.SetListener(listener);
-            StartTranscription(_testedAudio);
+                _mWhisper.SetListener(listener);
+
+                //_testedAudio = await Utils.CopyFileToAppDataDirectory2("audiotemp.wav");
+                //StartTranscription(_testedAudio);
+            }
         }
 
         // Transcription calls
         public void StartTranscription(string waveFilePath)
         {
-            _mWhisper.SetFilePath(waveFilePath);
-            _mWhisper.SetAction(Whisper.ActionTranscribe);
-            _mWhisper.Start();
+            if (RuntimeInformation.OSArchitecture != Architecture.X64) 
+            { 
+                _mWhisper.SetFilePath(waveFilePath);
+                _mWhisper.SetAction(Whisper.ActionTranscribe);
+                _mWhisper.Start();
+            }
         }
 
         public void StopTranscription()
         {
-            _mWhisper.Stop();
+            if (RuntimeInformation.OSArchitecture != Architecture.X64)
+            {
+                _mWhisper.Stop();
+            }
         }
 
         private class WhisperListener : IWhisperListener

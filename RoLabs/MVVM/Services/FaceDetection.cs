@@ -40,17 +40,43 @@ namespace RoLabs.MVVM.Services
         {
             // Convert byte[] to Mat
             Mat srcImage = Mat.FromImageData(imageData, ImreadModes.Color);
+
+            // Transpose the image (rotate 90 degrees)
             Cv2.Transpose(srcImage, srcImage);
-            Cv2.Flip(srcImage, srcImage, FlipMode.X);
-            Cv2.Resize(srcImage, srcImage, new OpenCvSharp.Size(480, 640));
+
+            // Flip the image horizontally if it's from the front camera
+            if (CameraViewModel.Instance.Camera.Name.Contains("Front"))
+            {
+                Cv2.Flip(srcImage, srcImage, FlipMode.X);
+            }
+
+#if false
+            string cacheFolder = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).AbsoluteFile.Path.ToString();
+            cacheFolder = cacheFolder + System.IO.Path.DirectorySeparatorChar;
+            var fileNameToSave = cacheFolder + "faceDetection.jpg";
+            Cv2.ImWrite(fileNameToSave, srcImage);
+#endif
+
+            // Get the original image size
+            var originalSize = srcImage.Size();
+
+            // Resize the image to the processing size
+            var processingSize = new OpenCvSharp.Size(CameraViewModel.Instance.ProcessWidth, CameraViewModel.Instance.ProcessHeight);
+            Mat srcImageResized = new Mat();
+            Cv2.Resize(srcImage, srcImageResized, processingSize);
+
+            // Calculate the scale factors for resizing back to the original size
+            double scaleX = (double)originalSize.Width / processingSize.Width;
+            double scaleY = (double)originalSize.Height / processingSize.Height;
+
             using var grayImage = new Mat();
             using var detectedFaceGrayImage = new Mat();
 
-            // Convert the image to grayscale
-            Cv2.CvtColor(srcImage, grayImage, ColorConversionCodes.BGR2GRAY);
+            // Convert the resized image to grayscale for processing
+            Cv2.CvtColor(srcImageResized, grayImage, ColorConversionCodes.BGR2GRAY);
             Cv2.EqualizeHist(grayImage, grayImage);
 
-            // Detect faces in the image
+            // Detect faces in the resized image
             var faces = _faceCascade.DetectMultiScale(
                 image: grayImage,
                 scaleFactor: 1.1,
@@ -58,19 +84,28 @@ namespace RoLabs.MVVM.Services
                 minSize: new OpenCvSharp.Size(60, 60)
             );
 
-            Debug.WriteLine($"[FaceDetection] Found {faces} faces");
-#if true
+            Debug.WriteLine($"[FaceDetection] Found {faces.Length} faces");
+
+#if false
             // Define color for drawing rectangles and circles
             var faceColor = Scalar.FromRgb(0, 255, 0);
 
-            // Process each detected face
+            // Process each detected face in the resized image
             foreach (var faceRect in faces)
             {
-                // Draw rectangle around detected face
-                Cv2.Rectangle(srcImage, faceRect, faceColor, 3);
+                // Scale the face rectangle to the original image size
+                var scaledFaceRect = new OpenCvSharp.Rect(
+                    (int)(faceRect.X * scaleX),
+                    (int)(faceRect.Y * scaleY),
+                    (int)(faceRect.Width * scaleX),
+                    (int)(faceRect.Height * scaleY)
+                );
 
-                // Crop the face region and convert it to grayscale
-                using var detectedFaceImage = new Mat(srcImage, faceRect);
+                // Draw rectangle around detected face on the original image
+                Cv2.Rectangle(srcImage, scaledFaceRect, faceColor, 3);
+
+                // Crop the face region from the resized image for further processing
+                using var detectedFaceImage = new Mat(srcImageResized, faceRect);
                 Cv2.CvtColor(detectedFaceImage, detectedFaceGrayImage, ColorConversionCodes.BGR2GRAY);
 
                 // Detect eyes in the face region
@@ -79,20 +114,20 @@ namespace RoLabs.MVVM.Services
                     minSize: new OpenCvSharp.Size(30, 30)
                 );
 
-                // Draw circles around detected eyes
+                // Draw circles around detected eyes on the original image
                 foreach (var nestedObject in nestedObjects)
                 {
                     var center = new OpenCvSharp.Point
                     {
-                        X = (int)(Math.Round(nestedObject.X + nestedObject.Width * 0.5, MidpointRounding.ToEven) + faceRect.Left),
-                        Y = (int)(Math.Round(nestedObject.Y + nestedObject.Height * 0.5, MidpointRounding.ToEven) + faceRect.Top)
+                        X = (int)(Math.Round(nestedObject.X + nestedObject.Width * 0.5, MidpointRounding.ToEven) * scaleX + scaledFaceRect.Left),
+                        Y = (int)(Math.Round(nestedObject.Y + nestedObject.Height * 0.5, MidpointRounding.ToEven) * scaleY + scaledFaceRect.Top)
                     };
-                    var radius = Math.Round((nestedObject.Width + nestedObject.Height) * 0.25, MidpointRounding.ToEven);
+                    var radius = Math.Round((nestedObject.Width + nestedObject.Height) * 0.25 * scaleX, MidpointRounding.ToEven);
                     Cv2.Circle(srcImage, center, (int)radius, faceColor, thickness: 2);
                 }
             }
 #endif
-            // Return the processed image
+            // Return the scaled face rectangles and the original image with drawn annotations
             return (faces, srcImage);
         }
     }

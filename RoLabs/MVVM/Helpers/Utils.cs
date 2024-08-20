@@ -42,7 +42,7 @@ namespace Rolabs.MVVM.Helpers
             return targetFile;
         }
 
-        public static async Task<string> SaveFile(Stream inputStream, string filename)
+        public static async Task<string> SaveAudioFile(Stream inputStream, string filename)
         {
             //string targetFile = System.IO.Path.Combine(FileSystem.Current.AppDataDirectory, filename);
             //// Copy the file to the AppDataDirectory

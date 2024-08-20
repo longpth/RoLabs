@@ -2,6 +2,7 @@
 using OpenCvSharp;
 using Rolabs.MVVM.Helpers;
 using Rolabs.MVVM.CustomViews;
+using System.Collections.ObjectModel;
 
 namespace Rolabs.MVVM.ViewModels
 {
@@ -39,6 +40,19 @@ namespace Rolabs.MVVM.ViewModels
             }
         }
 
+        private ComputerVisionViewModel()
+        {
+            // Initialize the Detectors collection with available options
+            Detectors = new ObservableCollection<string>
+            {
+                "Slam",
+                "FaceDetection"
+            };
+
+            // Set a default selected detector if needed
+            Detector = Detectors.FirstOrDefault();
+        }
+
         private static ComputerVisionViewModel _instance = null;
         public static ComputerVisionViewModel Instance
         {
@@ -52,22 +66,79 @@ namespace Rolabs.MVVM.ViewModels
             }
         }
 
-        // The method to process the image data
-        public void GrabImage(byte[] imageData, int width, int height)
+        // Property for available detectors
+        private string _detector;
+        public ObservableCollection<string> Detectors { get; }
+
+        // Property for the selected detector
+        public string Detector
         {
-            // Handle the image data (e.g., display or process it)
-            System.Diagnostics.Debug.WriteLine($"[ComputerVisionViewModel] Received image data with length: {imageData.Length} {width}x{height}");
+            get => _detector;
+            set
+            {
+                if (_detector != value)
+                {
+                    _detector = value;
+                    OnPropertyChanged(nameof(Detector));
+                }
+            }
+        }
 
-            //var boundingBoxes = ObjectDetection.Instance.Score(imageData);
-            //System.Diagnostics.Debug.WriteLine($"[ComputerVisionViewModel] boundingBoxes count = {boundingBoxes.Count}");
+        private void ProcessFaceDetection(byte[] imageData)
+        {
+            // Perform face detection
+            var (detectedFaces, tmp) = FaceDetection.Instance.DetectFaces(imageData);
 
-            (OpenCvSharp.Rect[] detectedFaces, OpenCvSharp.Mat tmp) = FaceDetection.Instance.DetectFaces(imageData);
-
-            //Convert OpenCvSharp.Rect to Microsoft.Maui.Graphics.Rect for drawing
+            // Convert OpenCvSharp.Rect to Microsoft.Maui.Graphics.Rect for drawing
             var faceRectangles = detectedFaces.Select(face => new Microsoft.Maui.Graphics.Rect(face.X, face.Y, face.Width, face.Height)).ToArray();
 
-            //Create a new FaceDetectionDrawable with the detected faces and a color, the image is transposed
-            CameraViewCanvas = new FaceDetectionDrawable(faceRectangles, Colors.Green, ProcessWidth, ProcessHeight);
+            // Update the UI using Dispatcher.Dispatch
+            Application.Current?.Dispatcher.Dispatch(() =>
+            {
+                // Create a new FaceDetectionDrawable with the detected faces and a color
+                CameraViewCanvas = new FaceDetectionDrawable(faceRectangles, Colors.Green, ProcessWidth, ProcessHeight);
+            });
+        }
+
+        private void ProcessingSlam(byte[] imageData)
+        {
+
+        }
+
+        // The method to process the image data
+        public async Task GrabImageAsync(byte[] imageData, int width, int height)
+        {
+            byte[] clonedImageData = (byte[])imageData.Clone();
+
+            // Handle the image data (e.g., display or process it)
+            System.Diagnostics.Debug.WriteLine($"[ComputerVisionViewModel] Received image data with length: {clonedImageData.Length} {width}x{height}");
+
+            if (_detector == "FaceDetection")
+            {
+                ProcessFaceDetection(clonedImageData);
+            }
+            else
+            {
+                ProcessingSlam(clonedImageData);
+            }
+        }
+
+        public void GrabImageFromVideo(Mat Image)
+        {
+            Mat acquireImage = Image.Clone();
+
+            KeyPoint[] keyPoints = ImageProcessing.FeatureExtraction(acquireImage);
+
+            var points = new List<PointF>(keyPoints.Length);
+
+            foreach (var keyPoint in keyPoints)
+            {
+                // Convert OpenCV KeyPoint to .NET PointF
+                points.Add(new PointF(keyPoint.Pt.X, keyPoint.Pt.Y));
+            }
+
+            // Create a new FaceDetectionDrawable with the detected faces and a color
+            CameraViewCanvas = new PointsDrawable(points);
         }
     }
 }

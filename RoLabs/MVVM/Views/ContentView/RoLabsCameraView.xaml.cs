@@ -11,7 +11,7 @@ public partial class RoLabsCameraView : ContentView
         InitializeComponent();
 
         BindingContext = _mainVisionViewModel;
-        cameraView.RegisterImageGrabbedCallback(_mainVisionViewModel.CameraViewModel.GrabImage);
-        cameraView.RegisterImageGrabbedCallback(_mainVisionViewModel.ComputerVisionViewModel.GrabImage);
+        cameraView.RegisterImageGrabbedCallback(_mainVisionViewModel.CameraViewModel.GrabImageAsync);
+        cameraView.RegisterImageGrabbedCallback(_mainVisionViewModel.ComputerVisionViewModel.GrabImageAsync);
     }
 }

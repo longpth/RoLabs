@@ -44,6 +44,7 @@
                    NumCamerasDetected="{Binding CameraViewModel.NumCameras, Mode=OneWayToSource}"/>
             </Frame>
 
+            <!-- Display Images from camera -->
             <Frame
                 BackgroundColor="Transparent"
                 HorizontalOptions="Center"
@@ -59,24 +60,6 @@
                     Drawable="{Binding CameraViewModel.CameraViewCanvas}"
                     Grid.Row="0" Grid.Column="0"
                     ZIndex="1"/>
-            </Frame>
-
-            <Frame
-                BackgroundColor="Transparent"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
-                WidthRequest="480"
-                HeightRequest="640"
-                HasShadow="True"
-                BorderColor="Green"
-                Padding="0"
-                Grid.Row="0" Grid.Column="0">
-                <!-- Image view for video -->
-            <customViews:DoubleBufferImage ImageSource="{Binding CameraViewModel.ImageSource}" 
-                        x:Name="doubleBufferImage" 
-                        IsVisible="{Binding CameraViewModel.UseCamera, Converter={StaticResource InverseBooleanConverter}}"
-                        WidthRequest="480" 
-                        Grid.Row="0" Grid.Column="0"/>
             </Frame>
 
             <!-- GraphicsView for overlay drawing (should be on top of everything) -->
@@ -120,6 +103,7 @@
             <Label Text="Use Camera" VerticalOptions="Center" BackgroundColor="White" TextColor="Black"/>
             <!-- CheckBox for toggling camera use -->
             <CheckBox IsChecked="{Binding CameraViewModel.UseCamera}" HorizontalOptions="Center"/>
+            <Picker VerticalOptions="Center" TextColor="Black" ItemsSource="{Binding ComputerVisionViewModel.Detectors}" SelectedItem="{Binding ComputerVisionViewModel.Detector,Mode=TwoWay}"/>
         </HorizontalStackLayout>
 
     </VerticalStackLayout>
