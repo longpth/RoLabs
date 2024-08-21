@@ -26,6 +26,8 @@ private:
     cv::Mat _current_image;
     bool _running;
 
+    int _frameCount;
+
     std::shared_ptr<Frame> _currentFrame;
     std::shared_ptr<Frame> _lastFrame;
 };

@@ -9,6 +9,7 @@ Slam::~Slam() {
 void Slam::start() {
     if (!_running) {
         _running = true;
+        _frameCount = 0;
         _tracking_thread = std::thread(&Slam::trackingThread, this);
         _mapping_thread = std::thread(&Slam::mappingThread, this);
     }
@@ -39,6 +40,12 @@ void Slam::trackingThread() {
             std::lock_guard<std::mutex> lock(_frame_mutex);
             _currentFrame = new_frame;
         }
+
+        //if (_frameCount >= 2 && _initializationDone == false)
+        //{
+        //    initialization();
+        //}
+
     }
 }
 
