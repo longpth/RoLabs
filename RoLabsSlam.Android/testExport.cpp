@@ -16,21 +16,3 @@ CVAPI(int) RoLabsFeatureExtraction_export(
         return -1;
     }
 }
-
-extern void TestCopyImage(cv::Mat* image, cv::Mat* outImage);
-
-CVAPI(ExceptionStatus) TestCopyImage_export(
-    cv::Mat* image, cv::Mat* outImage)
-{
-    BEGIN_WRAP
-        TestCopyImage(image, outImage);
-    END_WRAP
-}
-
-extern int TestAddFunc(int, int);
-
-CVAPI(int) TestAddFunc_export(
-    int a, int b)
-{
-    return TestAddFunc(a, b);
-}

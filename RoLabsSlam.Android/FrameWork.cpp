@@ -3,6 +3,9 @@
 #include <sstream>
 #include <vector>
 #include "my_functions.h"
+#include "Slam.hpp"
+
+Slam* gSlam = nullptr;
 
 int RoLabsFeatureExtraction(cv::Mat* image, std::vector<cv::KeyPoint>* keypoints)
 {
@@ -25,4 +28,35 @@ void TestCopyImage(cv::Mat* image, cv::Mat* outImage)
 int TestAddFunc(int a, int b)
 {
     return a + b;
+}
+
+void CreateSlam()
+{
+    gSlam = new Slam();
+}
+
+void DestroySlam()
+{
+    if (gSlam) {
+        gSlam->stop();
+        delete gSlam;
+        gSlam = nullptr;
+    }
+}
+
+int GetDebugKeyPoints(std::vector<cv::KeyPoint>* keypoints)
+{
+    int kpCnt = 0;
+    if (gSlam) {
+        gSlam->getDebugKeyPoints(*keypoints);
+        kpCnt = (*keypoints).size();
+    }
+    return kpCnt;
+}
+
+void GrabImage(cv::Mat* image)
+{
+    if (gSlam) {
+        gSlam->grabImage(*image);
+    }
 }

@@ -42,6 +42,28 @@ namespace Rolabs.MVVM.ViewModels
             }
         }
 
+        private bool _cameraRunning = false;
+
+        public bool CameraRunning
+        {
+            get { return _cameraRunning; }
+            set
+            {
+                if (_cameraRunning != value)
+                {
+                    _cameraRunning = value;
+                    if(_cameraRunning)
+                    {
+                        _rolabsSlamSharpWrapper.Start();
+                    }
+                    else
+                    {
+                        _rolabsSlamSharpWrapper.Stop();
+                    }
+                }
+            }
+        }
+
         private ComputerVisionViewModel()
         {
             // Initialize the Detectors collection with available options
@@ -122,16 +144,15 @@ namespace Rolabs.MVVM.ViewModels
                 // Convert image to grayscale
                 Cv2.CvtColor(acquireImage, gray, ColorConversionCodes.BGR2GRAY);
 
-                //Mat testImage = new Mat();
-
-                //_rolabsSlamSharpWrapper.TestCopyImage(gray, testImage);
-
                 //string cacheFolder = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).AbsoluteFile.Path.ToString();
                 //cacheFolder = cacheFolder + System.IO.Path.DirectorySeparatorChar;
                 //var fileNameToSave = cacheFolder + "testcppwrapper.jpg";
                 //Cv2.ImWrite(fileNameToSave, testImage);
 
-                KeyPoint[] keyPoints = _rolabsSlamSharpWrapper.RoLabsFeatureExtraction(gray);
+                //KeyPoint[] keyPoints = _rolabsSlamSharpWrapper.RoLabsFeatureExtraction(gray);
+
+                _rolabsSlamSharpWrapper.GrabImage(gray);
+                KeyPoint[] keyPoints = _rolabsSlamSharpWrapper.GetDebugKeyPoints();
 #endif
 
                 var points = new List<PointF>(keyPoints.Length);

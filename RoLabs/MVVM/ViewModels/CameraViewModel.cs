@@ -230,6 +230,7 @@ namespace Rolabs.MVVM.ViewModels
                     ReadVideo();
                 }
                 _cameraState = CameraState.Start;
+                ComputerVisionViewModel.Instance.CameraRunning = true;
             });
 
             StopCamera = new Command(() =>
@@ -240,6 +241,7 @@ namespace Rolabs.MVVM.ViewModels
                 _cameraState = CameraState.Stop;
                 // Stop capturing images
                 StopReadVideo();
+                ComputerVisionViewModel.Instance.CameraRunning = false;
             });
 
             PauseCamera = new Command(() =>

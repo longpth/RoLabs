@@ -2,13 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Sample.h" />
     <ClInclude Include="types_c.h" />
     <ClInclude Include="my_functions.h" />
+    <ClInclude Include="Slam.hpp" />
+    <ClInclude Include="Frame.hpp" />
+    <ClInclude Include="SlamExport.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Sample.cpp" />
-    <ClCompile Include="Tracking.cpp" />
-    <ClCompile Include="RoLabsSlamCSharp.cpp" />
+    <ClCompile Include="Slam.cpp" />
+    <ClCompile Include="Frame.cpp" />
+    <ClCompile Include="SlamExport.cpp" />
   </ItemGroup>
 </Project>

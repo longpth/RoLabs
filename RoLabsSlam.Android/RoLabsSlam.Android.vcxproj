@@ -114,6 +114,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ExceptionHandling>Enabled</ExceptionHandling>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)\RoLabs\Platforms\Android\libs\x86_64;%(AdditionalLibraryDirectories);$(ToolchainPrebuiltPath)\lib\gcc\x86_64-linux-android\$(ToolchainFullVersionName);$(StlLibraryPath)</AdditionalLibraryDirectories>
@@ -163,15 +164,17 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Frame.hpp" />
     <ClInclude Include="my_functions.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Sample.h" />
+    <ClInclude Include="Slam.hpp" />
+    <ClInclude Include="SlamExport.hpp" />
     <ClInclude Include="types_c.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RoLabsSlamCSharp.cpp" />
-    <ClCompile Include="Tracking.cpp" />
-    <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="Frame.cpp" />
+    <ClCompile Include="SlamExport.cpp" />
+    <ClCompile Include="Slam.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
