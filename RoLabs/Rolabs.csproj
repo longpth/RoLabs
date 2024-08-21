@@ -61,6 +61,7 @@
 	  <None Remove="Platforms\Android\libs\arm64-v8a\libtensorflowlite.so" />
 	  <None Remove="Platforms\Android\libs\arm64-v8a\libWhisper_Android.so" />
 	  <None Remove="Platforms\Android\libs\x86_64\libOpenCvSharp_Android.so" />
+	  <None Remove="Platforms\Android\libs\x86_64\libRoLabsSlam_Android.so" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -68,6 +69,7 @@
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\arm64-v8a\libtensorflowlite.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\arm64-v8a\libWhisper_Android.so" />
 	  <AndroidNativeLibrary Include="Platforms\Android\libs\x86_64\libOpenCvSharp_Android.so" />
+	  <AndroidNativeLibrary Include="Platforms\Android\libs\x86_64\libRoLabsSlam_Android.so" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -107,6 +109,7 @@
 	  <ProjectReference Include="..\Camera.MAUI\Camera.MAUI.csproj" />
 	  <ProjectReference Include="..\OpenCvSharp\OpenCvSharp.csproj" />
 	  <ProjectReference Include="..\Plugin.Maui.Audio\src\Plugin.Maui.Audio\Plugin.Maui.Audio.csproj" />
+	  <ProjectReference Include="..\RoLabsSlamSharp\RoLabsSlamSharp.csproj" />
 	  <ProjectReference Include="..\WhisperSharp\WhisperSharp.csproj" />
 	</ItemGroup>
 

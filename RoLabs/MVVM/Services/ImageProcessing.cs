@@ -66,6 +66,8 @@ namespace RoLabs.MVVM.Services
             using var descriptors = new Mat();
             orb.DetectAndCompute(gray, null, out keypoints, descriptors);
 
+            //keypoints = orb.Detect(img);
+
             return keypoints;
         }
     }

@@ -1,6 +1,6 @@
 ﻿using RoLabs.MVVM.Services;
 using OpenCvSharp;
-using Rolabs.MVVM.Helpers;
+using RoLabsSlamSharp;
 using Rolabs.MVVM.CustomViews;
 using System.Collections.ObjectModel;
 
@@ -12,6 +12,8 @@ namespace Rolabs.MVVM.ViewModels
         private readonly int ProcessWidth = 480, ProcessHeight = 640;
 
         private ImageSource _imageSource;
+
+        private RolabsSlamSharpWrapper _rolabsSlamSharpWrapper = new RolabsSlamSharpWrapper();
 
         public ImageSource ImageSource
         {
@@ -105,6 +107,46 @@ namespace Rolabs.MVVM.ViewModels
 
         }
 
+        private void ProcessingSlam(Mat image)
+        {
+            if (!image.Empty())
+            {
+                Mat acquireImage = image.Clone();
+
+#if false
+                KeyPoint[] keyPoints = ImageProcessing.FeatureExtraction(acquireImage);
+
+#else
+                Mat gray = new Mat();
+
+                // Convert image to grayscale
+                Cv2.CvtColor(acquireImage, gray, ColorConversionCodes.BGR2GRAY);
+
+                //Mat testImage = new Mat();
+
+                //_rolabsSlamSharpWrapper.TestCopyImage(gray, testImage);
+
+                //string cacheFolder = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures).AbsoluteFile.Path.ToString();
+                //cacheFolder = cacheFolder + System.IO.Path.DirectorySeparatorChar;
+                //var fileNameToSave = cacheFolder + "testcppwrapper.jpg";
+                //Cv2.ImWrite(fileNameToSave, testImage);
+
+                KeyPoint[] keyPoints = _rolabsSlamSharpWrapper.RoLabsFeatureExtraction(gray);
+#endif
+
+                var points = new List<PointF>(keyPoints.Length);
+
+                foreach (var keyPoint in keyPoints)
+                {
+                    // Convert OpenCV KeyPoint to .NET PointF
+                    points.Add(new PointF(keyPoint.Pt.X, keyPoint.Pt.Y));
+                }
+
+                // Create a new FaceDetectionDrawable with the detected faces and a color
+                CameraViewCanvas = new PointsDrawable(points);
+            }
+        }
+
         // The method to process the image data
         public async Task GrabImageAsync(byte[] imageData, int width, int height)
         {
@@ -125,20 +167,14 @@ namespace Rolabs.MVVM.ViewModels
 
         public void GrabImageFromVideo(Mat Image)
         {
-            Mat acquireImage = Image.Clone();
-
-            KeyPoint[] keyPoints = ImageProcessing.FeatureExtraction(acquireImage);
-
-            var points = new List<PointF>(keyPoints.Length);
-
-            foreach (var keyPoint in keyPoints)
+            if (_detector == "FaceDetection")
             {
-                // Convert OpenCV KeyPoint to .NET PointF
-                points.Add(new PointF(keyPoint.Pt.X, keyPoint.Pt.Y));
+                // TODO
             }
-
-            // Create a new FaceDetectionDrawable with the detected faces and a color
-            CameraViewCanvas = new PointsDrawable(points);
+            else
+            {
+                ProcessingSlam(Image);
+            }
         }
     }
 }
