@@ -19,13 +19,19 @@ namespace Rolabs
         protected override void OnAppearing()
         {
             base.OnAppearing();
+            //CameraViewModel.Instance.Dispose();
+        }
+
+        protected override void OnDisappearing() 
+        { 
+            base.OnDisappearing();
             CameraViewModel.Instance.Dispose();
         }
 
         private async void OnVisionButtonClicked(object sender, EventArgs e)
         {
             // Navigate to the VisionPage
-            await Navigation.PushAsync(new VisionPage());
+            await Shell.Current.GoToAsync(nameof(VisionPage));
         }
 
     }

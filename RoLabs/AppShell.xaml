@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Rolabs"
+    xmlns:views="clr-namespace:Rolabs.MVVM.Views;assembly=Rolabs"
     Shell.FlyoutBehavior="Disabled"
     Title="Rolabs">
 
@@ -11,5 +12,4 @@
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
-
 </Shell>
