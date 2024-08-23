@@ -25,7 +25,6 @@ namespace Rolabs.MVVM.ViewModels
     public enum CameraState { Start, Stop, Pause };
     public class CameraViewModel : BaseViewModel, IDisposable
     {
-        public readonly int ProcessWidth=480, ProcessHeight=640;
         private readonly int CaptureWaitTime = 33; // milliseconds
 
         private static CameraViewModel instance = null;
@@ -135,7 +134,7 @@ namespace Rolabs.MVVM.ViewModels
         /// </summary>
         private async void InitializeAsync()
         {
-            _videoPath = await Utils.CopyFileToAppDataDirectory("test.mp4");
+            _videoPath = await Utils.CopyFileToAppDataDirectory("slam\\video\\euroc_V2_01_easy.mp4");
             OnFileCopyCompleted();
         }
 
@@ -171,7 +170,7 @@ namespace Rolabs.MVVM.ViewModels
 
                     Cv2.Transpose(_frame, _frameTransposed);
                     Cv2.Flip(_frameTransposed, _frameTransposed, FlipMode.Y);
-                    Cv2.Resize(_frameTransposed, _frameResized, new OpenCvSharp.Size(ProcessWidth, ProcessHeight));
+                    Cv2.Resize(_frameTransposed, _frameResized, new OpenCvSharp.Size(Global.VisionWidth, Global.VisionHeight));
 
                     // If the frame could not be read, stop the loop and release resources
                     if (!ret)
@@ -315,8 +314,8 @@ namespace Rolabs.MVVM.ViewModels
                 IImage image = ImageConverter.LoadImageFromByteArray(clonedImageData);
 
                 // Assume the target width and height are the dimensions of the GraphicsView
-                float targetWidth = ProcessWidth;
-                float targetHeight = ProcessHeight;
+                float targetWidth = Global.VisionWidth;
+                float targetHeight = Global.VisionHeight;
 
                 // Calculate the aspect ratio of the original image and the target area
                 float imageAspectRatio = (float)width / height;

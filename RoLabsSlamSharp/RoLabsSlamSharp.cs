@@ -41,6 +41,10 @@ namespace RoLabsSlamSharp
         [DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void Slam_stop(IntPtr slam);
 
+        // P/Invoke for Slam_setIntrinsicsMatrix
+        [DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private static extern void Slam_setIntrinsicsMatrix(IntPtr slam, float fx, float fy, float cx, float cy);
+
         // Constructor - Create Slam object
         public RolabsSlamSharpWrapper()
         {
@@ -112,6 +116,13 @@ namespace RoLabsSlamSharp
                 throw new ObjectDisposedException("Slam");
 
             Slam_start(_slamPtr);
+        }
+
+        public void SetCameraIntrinsics(float fx, float fy, float cx, float cy)
+        {
+            if (_slamPtr == IntPtr.Zero)
+                throw new ObjectDisposedException("Slam");
+            Slam_setIntrinsicsMatrix(_slamPtr, fx, fy, cx, cy);
         }
 
         // RoLabsFeatureExtraction method

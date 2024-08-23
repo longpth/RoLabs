@@ -61,7 +61,7 @@ namespace RoLabs.MVVM.Services
             var originalSize = srcImage.Size();
 
             // Resize the image to the processing size
-            var processingSize = new OpenCvSharp.Size(CameraViewModel.Instance.ProcessWidth, CameraViewModel.Instance.ProcessHeight);
+            var processingSize = new OpenCvSharp.Size(Global.VisionWidth, Global.VisionHeight);
             Mat srcImageResized = new Mat();
             Cv2.Resize(srcImage, srcImageResized, processingSize);
 

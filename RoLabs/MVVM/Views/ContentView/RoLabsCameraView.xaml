@@ -7,6 +7,7 @@
              xmlns:cv="clr-namespace:Camera.MAUI;assembly=Camera.MAUI"
              xmlns:mm="clr-namespace:MediaManager.Forms;assembly=MediaManager.Forms"
              xmlns:views="clr-namespace:Rolabs.MVVM.Views"
+             xmlns:helpers="clr-namespace:Rolabs.MVVM.Helpers"
              >
     <ContentView.Resources>
         <ResourceDictionary>
@@ -27,8 +28,8 @@
             <Frame
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                WidthRequest="480"
-                HeightRequest="640"
+                WidthRequest="{Binding VisionSizeViewModel.VisionWidth}"
+                HeightRequest="{Binding VisionSizeViewModel.VisionHeight}"
                 HasShadow="True"
                 Padding="0"
                 Grid.Row="0" Grid.Column="0">
@@ -49,14 +50,14 @@
                 BackgroundColor="Transparent"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                WidthRequest="480"
-                HeightRequest="640"
+                WidthRequest="{Binding VisionSizeViewModel.VisionWidth}"
+                HeightRequest="{Binding VisionSizeViewModel.VisionHeight}"
                 HasShadow="True"
                 Padding="0"
                 Grid.Row="0" Grid.Column="0">
                 <GraphicsView
-                    WidthRequest="480"
-                    HeightRequest="640"
+                    WidthRequest="{Binding VisionSizeViewModel.VisionWidth}"
+                    HeightRequest="{Binding VisionSizeViewModel.VisionHeight}"
                     Drawable="{Binding CameraViewModel.CameraViewCanvas}"
                     Grid.Row="0" Grid.Column="0"
                     ZIndex="1"/>
@@ -67,18 +68,18 @@
                 BackgroundColor="Transparent"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                WidthRequest="480"
-                HeightRequest="640"
+                WidthRequest="{Binding VisionSizeViewModel.VisionWidth}"
+                HeightRequest="{Binding VisionSizeViewModel.VisionHeight}"
                 HasShadow="True"
                 BorderColor="Green"
                 Padding="0"
                 Grid.Row="0" Grid.Column="0">
-                <GraphicsView
-                WidthRequest="480"
-                HeightRequest="640"
-                Drawable="{Binding ComputerVisionViewModel.CameraViewCanvas}"
-                Grid.Row="0" Grid.Column="0"
-                ZIndex="1"/>
+                    <GraphicsView
+                    WidthRequest="{Binding VisionSizeViewModel.VisionWidth}"
+                    HeightRequest="{Binding VisionSizeViewModel.VisionHeight}"
+                    Drawable="{Binding ComputerVisionViewModel.CameraViewCanvas}"
+                    Grid.Row="0" Grid.Column="0"
+                    ZIndex="1"/>
             </Frame>
 
         </Grid>

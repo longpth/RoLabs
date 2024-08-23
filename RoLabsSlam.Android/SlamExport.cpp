@@ -32,3 +32,9 @@ CVAPI(void) Slam_start(Slam * slam) {
         slam->start();
     }
 }
+
+CVAPI(void) Slam_setIntrinsicsMatrix(Slam* slam, float fx, float fy, float cx, float cy) {
+    if (slam) {
+        slam->setCameraInfo(fx, fy, cx, cy);
+    }
+}

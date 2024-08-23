@@ -3,13 +3,12 @@ using OpenCvSharp;
 using RoLabsSlamSharp;
 using Rolabs.MVVM.CustomViews;
 using System.Collections.ObjectModel;
+using Rolabs.MVVM.Helpers;
 
 namespace Rolabs.MVVM.ViewModels
 {
     public class ComputerVisionViewModel: BaseViewModel
     {
-
-        private readonly int ProcessWidth = 480, ProcessHeight = 640;
 
         private ImageSource _imageSource;
 
@@ -54,6 +53,7 @@ namespace Rolabs.MVVM.ViewModels
                     _cameraRunning = value;
                     if(_cameraRunning)
                     {
+                        _rolabsSlamSharpWrapper.SetCameraIntrinsics(458.654f, 457.296f, 367.215f, 248.375f);
                         _rolabsSlamSharpWrapper.Start();
                     }
                     else
@@ -120,7 +120,7 @@ namespace Rolabs.MVVM.ViewModels
             Application.Current?.Dispatcher.Dispatch(() =>
             {
                 // Create a new FaceDetectionDrawable with the detected faces and a color
-                CameraViewCanvas = new FaceDetectionDrawable(faceRectangles, Colors.Green, ProcessWidth, ProcessHeight);
+                CameraViewCanvas = new FaceDetectionDrawable(faceRectangles, Colors.Green, Global.VisionWidth, Global.VisionHeight);
             });
         }
 

@@ -11,10 +11,13 @@ namespace Rolabs.MVVM.ViewModels
         public CameraViewModel CameraViewModel { get; }
         public ComputerVisionViewModel ComputerVisionViewModel { get; }
 
+        public VisionSizeViewModel VisionSizeViewModel { get; }
+
         public MainVisionViewModel()
         {
             CameraViewModel = CameraViewModel.Instance;
             ComputerVisionViewModel = ComputerVisionViewModel.Instance;
+            VisionSizeViewModel = VisionSizeViewModel.Instance;
         }
     }
 }

@@ -17,3 +17,4 @@ CVAPI(void) Slam_grabImage(Slam* slam, cv::Mat* image);
 CVAPI(void) Slam_getDebugKeyPoints(Slam* slam, std::vector<cv::KeyPoint>* keypoints);
 CVAPI(void) Slam_stop(Slam* slam);
 CVAPI(void) Slam_start(Slam* slam);
+CVAPI(void) Slam_setIntrinsicsMatrix(Slam* slam, float fx, float fy, float cx, float cy);
