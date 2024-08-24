@@ -30,7 +30,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RolabsSlam.Share", "RolabsS
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RolabsSlam.Windows", "RolabsSlam.Windows\RolabsSlam.Windows.vcxproj", "{8E7279F8-F801-4672-B42F-1ED2C68B16A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoLabsSlam.Test", "RoLabsSlam.Test\RoLabsSlam.Test.csproj", "{0437BDBA-AD6F-4665-B483-AD66298C8C08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoLabsSlam.Test", "RoLabsSlam.Test\RoLabsSlam.Test.csproj", "{0437BDBA-AD6F-4665-B483-AD66298C8C08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

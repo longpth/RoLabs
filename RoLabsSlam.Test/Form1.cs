@@ -1,3 +1,5 @@
+using OpenCvSharp;
+
 namespace RoLabsSlam.Test
 {
     public partial class Form1 : Form
@@ -5,6 +7,52 @@ namespace RoLabsSlam.Test
         public Form1()
         {
             InitializeComponent();
+            InitializeVideoCapture();
         }
+
+        private VideoCapture _videoCapture;
+        private Mat _frame;
+        private System.Windows.Forms.Timer _timer;
+
+        private void InitializeVideoCapture()
+        {
+            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            string projectDir = Directory.GetParent(baseDir).Parent.Parent.FullName;
+            string videoPath = projectDir + @"\..\..\RoLabs\Resources\Raw\slam\video\euroc_V2_01_easy.mp4";
+            _videoCapture = new VideoCapture(videoPath);
+            _frame = new Mat();
+            _timer = new System.Windows.Forms.Timer
+            {
+                Interval = 33 // Approx. 30 FPS
+            };
+            _timer.Tick += Timer_Tick;
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (_videoCapture.Read(_frame))
+            {
+                // Convert the Mat to Bitmap on the background thread
+                Bitmap newBitmap = BitmapConverter.ToBitmap(_frame);
+
+                // Use Invoke to update the UI on the main thread
+                pictureBoxRaw.Invoke(new Action(() =>
+                {
+                    pictureBoxRaw.Image?.Dispose();
+                    pictureBoxRaw.Image = newBitmap;
+                }));
+            }
+            else
+            {
+                _timer.Stop();
+                _videoCapture.Release();
+            }
+        }
+
+        private void startButton_Click(object sender, EventArgs e)
+        {
+            _timer.Start();
+        }
+
     }
 }

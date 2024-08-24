@@ -25,7 +25,11 @@ namespace OpenCvSharp.Internal;
 #endif
 public static partial class NativeMethods
 {
+#if ANDROID
     public const string DllExtern = "libOpenCvSharp_Android.so";
+#else
+    public const string DllExtern = "OpenCvSharpExtern";
+#endif
 
     //public const string DllFfmpegX86 = "opencv_videoio_ffmpeg430";
     //public const string DllFfmpegX64 = "opencv_videoio_ffmpeg430_64";
