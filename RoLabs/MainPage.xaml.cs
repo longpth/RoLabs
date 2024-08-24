@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿#if ANDROID
+using System.Diagnostics;
 using Android.Media;
+#endif
 using Plugin.Maui.Audio;
 using Rolabs.MVVM.ViewModels;
 using Rolabs.MVVM.Views;

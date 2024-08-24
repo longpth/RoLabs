@@ -1,4 +1,6 @@
+#if ANDROID
 using Android.Media;
+#endif
 using Plugin.Maui.Audio;
 using Rolabs.MVVM.ViewModels;
 

@@ -15,7 +15,9 @@ using System.Threading;
 using MediaManager.Forms.Xaml;
 using Microsoft.Maui.Controls;
 using System.Diagnostics;
+#if ANDROID
 using Android.Views.Animations;
+#endif
 using Rolabs.MVVM.CustomViews;
 using RoLabs.MVVM.Services;
 using IImage = Microsoft.Maui.Graphics.IImage;

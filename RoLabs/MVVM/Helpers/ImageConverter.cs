@@ -1,5 +1,7 @@
-﻿using Android.Graphics;
+﻿#if ANDROID
+using Android.Graphics;
 using Java.Nio;
+#endif
 using Microsoft.Maui.Graphics.Platform;
 using OpenCvSharp;
 using SkiaSharp;
@@ -9,8 +11,10 @@ namespace Rolabs.MVVM.Helpers
 {
     public class ImageConverter
     {
-        public static byte[] ResizeImageByteArray(byte[] originalImageData, int width, int height)
+        public static byte[]? ResizeImageByteArray(byte[] originalImageData, int width, int height)
         {
+            byte[] pixelData = null;
+#if ANDROID
             // Decode the byte array into a Bitmap
             Bitmap originalBitmap = BitmapFactory.DecodeByteArray(originalImageData, 0, originalImageData.Length);
 
@@ -20,14 +24,14 @@ namespace Rolabs.MVVM.Helpers
             // Calculate the size of the byte array
             int bytesPerPixel = resizedBitmap.HasAlpha ? 4 : 3; // ARGB_8888 or RGB_888
             int stride = width * bytesPerPixel;
-            byte[] pixelData = new byte[stride * height];
+            pixelData = new byte[stride * height];
 
             // Copy the pixel data into the byte array
             using (var buffer = ByteBuffer.Wrap(pixelData))
             {
                 resizedBitmap.CopyPixelsToBuffer(buffer);
             }
-
+#endif
             // Return the raw pixel data
             return pixelData;
         }

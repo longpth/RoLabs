@@ -7,9 +7,11 @@ using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.Compatibility.Hosting;
+#if ANDROID
 using MediaManager.Platforms.Android.Video;
-using Plugin.Maui.Audio;
 using Android.Media;
+#endif
+using Plugin.Maui.Audio;
 
 namespace Rolabs
 {

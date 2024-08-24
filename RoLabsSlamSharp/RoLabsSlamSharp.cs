@@ -9,7 +9,11 @@ namespace RoLabsSlamSharp
 {
     public class RolabsSlamSharpWrapper : IDisposable
     {
+#if ANDROID
         private const string DllExtern = "libRoLabsSlam_Android.so";
+#else
+        private const string DllExtern = "RolabsSlam.Windows.dll";
+#endif
         private IntPtr _slamPtr = IntPtr.Zero; // Pointer to native Slam object
 
         // P/Invoke for RoLabsFeatureExtraction_export

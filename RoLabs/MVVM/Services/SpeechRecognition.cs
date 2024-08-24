@@ -2,7 +2,9 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+#if ANDROID
 using Android.Util; // Assuming you're using Android for logging
+#endif
 using Rolabs.MVVM.Helpers;
 using WhisperSharp;
 

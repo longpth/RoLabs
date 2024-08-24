@@ -34,6 +34,19 @@
       <Platform>x86</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\RolabsSlam.Share\Frame.cpp" />
+    <ClCompile Include="..\RolabsSlam.Share\Slam.cpp" />
+    <ClCompile Include="..\RolabsSlam.Share\SlamExport.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\RolabsSlam.Share\Frame.hpp" />
+    <ClInclude Include="..\RolabsSlam.Share\my_functions.h" />
+    <ClInclude Include="..\RolabsSlam.Share\Slam.hpp" />
+    <ClInclude Include="..\RolabsSlam.Share\SlamExport.hpp" />
+    <ClInclude Include="..\RolabsSlam.Share\types_c.h" />
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8b87c69c-10ae-4aa7-8003-0c66f0c63f4d}</ProjectGuid>
     <Keyword>Android</Keyword>
@@ -91,7 +104,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)\..\Rolabs\Platforms\Android\libs\x86_64</OutDir>
     <IntDir>$(ProjectDir)\build\intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)\opencv_files\opencv4100_android\include;$(LLVMToolchainPrebuiltRoot)\lib64\clang\$(LLVMVersion)\include;</IncludePath>
+    <IncludePath>$(ProjectDir);$(SolutionDir)\opencv_files\opencv4100_android\include;$(LLVMToolchainPrebuiltRoot)\lib64\clang\$(LLVMVersion)\include;</IncludePath>
     <LibraryPath>$(SolutionDir)\RoLabs\Platforms\Android\libs\x86_64</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -101,7 +114,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <IncludePath>$(SolutionDir)\opencv_files\opencv4100_android\include;$(LLVMToolchainPrebuiltRoot)\lib64\clang\$(LLVMVersion)\include;</IncludePath>
+    <IncludePath>$(ProjectDir);$(SolutionDir)\opencv_files\opencv4100_android\include;$(LLVMToolchainPrebuiltRoot)\lib64\clang\$(LLVMVersion)\include;</IncludePath>
     <LibraryPath>$(SolutionDir)\RoLabs\Platforms\Android\libs\arm64-v8a</LibraryPath>
     <OutDir>$(ProjectDir)\..\Rolabs\Platforms\Android\libs\arm64-v8a</OutDir>
     <IntDir>$(ProjectDir)\build\intermediate\$(Platform)\$(Configuration)\</IntDir>
@@ -174,19 +187,6 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Frame.hpp" />
-    <ClInclude Include="my_functions.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="Slam.hpp" />
-    <ClInclude Include="SlamExport.hpp" />
-    <ClInclude Include="types_c.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Frame.cpp" />
-    <ClCompile Include="SlamExport.cpp" />
-    <ClCompile Include="Slam.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

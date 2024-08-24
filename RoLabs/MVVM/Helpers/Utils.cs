@@ -51,9 +51,9 @@ namespace Rolabs.MVVM.Helpers
 
             //return targetFile;
 
-            string fileNameToSave;
+            string fileNameToSave="";
 
-#if __ANDROID__
+#if ANDROID
             var stream = inputStream;
             //string cacheFolder = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDownloads).AbsoluteFile.Path.ToString(); // gives app package in data structure
             string cacheFolder = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDocuments).AbsoluteFile.Path.ToString(); //gives general downloads folder
