@@ -37,6 +37,7 @@ namespace RoLabsSlam.Test
             pictureBoxRaw = new PictureBox();
             pictureBoxProcess = new PictureBox();
             startButton = new System.Windows.Forms.Button();
+            stopButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)pictureBoxRaw).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxProcess).BeginInit();
             SuspendLayout();
@@ -59,7 +60,7 @@ namespace RoLabsSlam.Test
             // 
             // startButton
             // 
-            startButton.Location = new System.Drawing.Point(631, 754);
+            startButton.Location = new System.Drawing.Point(565, 713);
             startButton.Name = "startButton";
             startButton.Size = new System.Drawing.Size(94, 29);
             startButton.TabIndex = 2;
@@ -67,11 +68,22 @@ namespace RoLabsSlam.Test
             startButton.UseVisualStyleBackColor = true;
             startButton.Click += startButton_Click;
             // 
+            // stopButton
+            // 
+            stopButton.Location = new System.Drawing.Point(698, 713);
+            stopButton.Name = "stopButton";
+            stopButton.Size = new System.Drawing.Size(94, 29);
+            stopButton.TabIndex = 3;
+            stopButton.Text = "Stop";
+            stopButton.UseVisualStyleBackColor = true;
+            stopButton.Click += stopButton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1436, 795);
+            ClientSize = new System.Drawing.Size(1436, 753);
+            Controls.Add(stopButton);
             Controls.Add(startButton);
             Controls.Add(pictureBoxProcess);
             Controls.Add(pictureBoxRaw);
@@ -87,5 +99,6 @@ namespace RoLabsSlam.Test
         private PictureBox pictureBoxRaw;
         private PictureBox pictureBoxProcess;
         private System.Windows.Forms.Button startButton;
+        private System.Windows.Forms.Button stopButton;
     }
 }

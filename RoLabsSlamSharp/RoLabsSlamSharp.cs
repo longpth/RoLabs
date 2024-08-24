@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using OpenCvSharp;
 using OpenCvSharp.Internal;
@@ -12,7 +13,7 @@ namespace RoLabsSlamSharp
 #if ANDROID
         private const string DllExtern = "libRoLabsSlam_Android.so";
 #else
-        private const string DllExtern = "RolabsSlam.Windows.dll";
+        private const string DllExtern = "RolabsSlam.Windows";
 #endif
         private IntPtr _slamPtr = IntPtr.Zero; // Pointer to native Slam object
 

@@ -1,4 +1,5 @@
 using OpenCvSharp;
+using RoLabsSlamSharp;
 
 namespace RoLabsSlam.Test
 {
@@ -13,6 +14,8 @@ namespace RoLabsSlam.Test
         private VideoCapture _videoCapture;
         private Mat _frame;
         private System.Windows.Forms.Timer _timer;
+        private RolabsSlamSharpWrapper _rolabsSlamWrapper;
+        private bool _isStart = false;
 
         private void InitializeVideoCapture()
         {
@@ -26,6 +29,8 @@ namespace RoLabsSlam.Test
                 Interval = 33 // Approx. 30 FPS
             };
             _timer.Tick += Timer_Tick;
+
+            _rolabsSlamWrapper = new RolabsSlamSharpWrapper();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -41,6 +46,29 @@ namespace RoLabsSlam.Test
                     pictureBoxRaw.Image?.Dispose();
                     pictureBoxRaw.Image = newBitmap;
                 }));
+
+                _rolabsSlamWrapper.GrabImage(_frame);
+                KeyPoint[] keyPoints = _rolabsSlamWrapper.GetDebugKeyPoints();
+
+                Mat debugImg = _frame.Clone();
+
+                // Draw circles at each keypoint
+                foreach (var keypoint in keyPoints)
+                {
+                    // Draw a circle at each keypoint position
+                    Cv2.Circle(debugImg, (OpenCvSharp.Point)keypoint.Pt, 3, Scalar.Green, 2);
+                }
+
+                // Convert the Mat to Bitmap on the background thread
+                Bitmap processBitmap = BitmapConverter.ToBitmap(debugImg);
+
+                // Use Invoke to update the UI on the main thread
+                pictureBoxProcess.Invoke(new Action(() =>
+                {
+                    pictureBoxProcess.Image?.Dispose();
+                    pictureBoxProcess.Image = processBitmap;
+                }));
+
             }
             else
             {
@@ -51,8 +79,18 @@ namespace RoLabsSlam.Test
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            _timer.Start();
+            if (!_isStart)
+            {
+                _timer.Start();
+                _rolabsSlamWrapper.Start();
+            }
         }
 
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            _isStart = false;
+            _timer.Stop();
+            _rolabsSlamWrapper.Stop();
+        }
     }
 }

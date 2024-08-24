@@ -1725,7 +1725,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Platforms\Android\libs\armeabi-v7a\" />
-	  <Folder Include="Platforms\Windows\libs\" />
 	</ItemGroup>
 
 	<ItemGroup>
