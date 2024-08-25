@@ -1,21 +1,44 @@
 using OpenCvSharp;
 using RoLabsSlamSharp;
+using System;
+using System.Windows.Forms;
+//using SharpDX;
+//using SharpDX.Direct3D11;
+//using SharpDX.DXGI;
+//using SharpDX.Direct3D;
+//using Device = SharpDX.Direct3D11.Device;
+
+using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using OpenTK.WinForms;
+using RoLabsSlam.Windows.Test;
 
 namespace RoLabsSlam.Test
 {
     public partial class Form1 : Form
     {
+        private VideoCapture _videoCapture;
+        private Mat _frame;
+        private System.Windows.Forms.Timer _timer;
+        private RolabsSlamSharpWrapper _rolabsSlamWrapper;
+        private bool _isStart = false;
+
+        //3D rendering camera pose
+        private Render3D _render3D;
+
         public Form1()
         {
             InitializeComponent();
             InitializeVideoCapture();
         }
 
-        private VideoCapture _videoCapture;
-        private Mat _frame;
-        private System.Windows.Forms.Timer _timer;
-        private RolabsSlamSharpWrapper _rolabsSlamWrapper;
-        private bool _isStart = false;
+        private void glControl_Load(object? sender, EventArgs e)
+        {
+            Render3D _render3D = new Render3D(glControl);
+
+            _render3D.glControl_Load(sender, e);
+        }
 
         private void InitializeVideoCapture()
         {
@@ -82,6 +105,7 @@ namespace RoLabsSlam.Test
             if (!_isStart)
             {
                 _timer.Start();
+                _rolabsSlamWrapper.SetCameraIntrinsics(458.654f, 457.296f, 367.215f, 248.375f);
                 _rolabsSlamWrapper.Start();
             }
         }

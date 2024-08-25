@@ -22,6 +22,7 @@
     <ClCompile Include="..\RolabsSlam.Share\Frame.cpp" />
     <ClCompile Include="..\RolabsSlam.Share\Slam.cpp" />
     <ClCompile Include="..\RolabsSlam.Share\SlamExport.cpp" />
+    <ClCompile Include="MapPoint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\RolabsSlam.Share\Frame.hpp" />
@@ -29,6 +30,7 @@
     <ClInclude Include="..\RolabsSlam.Share\Slam.hpp" />
     <ClInclude Include="..\RolabsSlam.Share\SlamExport.hpp" />
     <ClInclude Include="..\RolabsSlam.Share\types_c.h" />
+    <ClInclude Include="MapPoint.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{8E7279F8-F801-4672-B42F-1ED2C68B16A4}</ProjectGuid>
@@ -37,6 +39,7 @@
     <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
     <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>RoLabsSlam.Windows</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -92,7 +95,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\build\intermediate\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\opencv_files\opencv4100_win_x64\include;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\opencv_files\opencv4100_win_x64\include;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\opencv_files\opencv4100_win_x64\include;$(SolutionDir)\RolabsSlam.Share;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\opencv_files\opencv4100_win_x64\x64\vc17\staticlib;$(SolutionDir)\tesseract_vcpkg.0.0.8-beta\installed\x64-windows-static\lib;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\opencv_files\opencv4100_win_x64\x64\vc17\staticlib;$(SolutionDir)\tesseract_vcpkg.0.0.8-beta\installed\x64-windows-static\lib;$(LibraryPath)</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\opencv_files\opencv4100_win_x86\include;$(IncludePath)</IncludePath>

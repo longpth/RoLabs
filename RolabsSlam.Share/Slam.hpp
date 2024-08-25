@@ -18,14 +18,14 @@ public:
     Slam();
     ~Slam();
 
-    void start();
-    void stop();
-    void grabImage(const cv::Mat& image);
-    void getDebugKeyPoints(std::vector<cv::KeyPoint>* keypoints) const;
-    void initialization();
-    void setCameraInfo(float cx, float cy, float fx, float fy);
+    void Start();
+    void Stop();
+    void GrabImage(const cv::Mat& image);
+    void GetDebugKeyPoints(std::vector<cv::KeyPoint>* keypoints) const;
+    void SetCameraInfo(float cx, float cy, float fx, float fy);
 
 private:
+    void initialization();
     void trackingThread();
     void mappingThread();
     std::vector<cv::DMatch> matchKeyPoints(const Frame& frame1, const Frame& frame2);
@@ -45,6 +45,7 @@ private:
 
     std::shared_ptr<Frame> _currentFrame;
     std::shared_ptr<Frame> _lastFrame;
+    std::shared_ptr<Frame> _initialFrame;
 
     CameraInfo _cameraInfo;
 };

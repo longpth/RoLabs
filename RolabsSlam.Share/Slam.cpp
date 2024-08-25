@@ -1,4 +1,5 @@
 #include "Slam.hpp"
+#include "helpers.hpp"
 
 #if defined(_WIN64) || defined(_WIN32)
 
@@ -14,10 +15,10 @@ Slam::Slam() : _running(false) {
 }
 
 Slam::~Slam() {
-    stop();  // Ensure threads are stopped when the object is destroyed
+    Stop();  // Ensure threads are stopped when the object is destroyed
 }
 
-void Slam::start() {
+void Slam::Start() {
     if (!_running) {
         _running = true;
         _frameCount = 0;
@@ -27,7 +28,7 @@ void Slam::start() {
     }
 }
 
-void Slam::stop() {
+void Slam::Stop() {
     _running = false;
     if (_tracking_thread.joinable()) {
         _tracking_thread.join();
@@ -80,12 +81,12 @@ void Slam::mappingThread() {
     }
 }
 
-void Slam::grabImage(const cv::Mat& image) {
+void Slam::GrabImage(const cv::Mat& image) {
     std::lock_guard<std::mutex> lock(_image_mutex);
     _currentImage = image.clone();
 }
 
-void Slam::getDebugKeyPoints(std::vector<cv::KeyPoint>* keypoints) const {
+void Slam::GetDebugKeyPoints(std::vector<cv::KeyPoint>* keypoints) const {
     if (!keypoints) return;
     std::lock_guard<std::mutex> lock(_frame_mutex);
     if (_currentFrame) {
@@ -124,6 +125,17 @@ void Slam::initialization()
         std::cerr << "Error: Could not estimate the Essential Matrix." << std::endl;
         return;
     }
+    std::cout << "Essential Matrix = {} " << essential_matrix << std::endl;
+
+    cv::Mat R, t;
+
+    FindRtAndTriangulate(essential_matrix, cameraMatrix, _lastFrame->KeyPoints(), _currentFrame->KeyPoints(), good_matches, _currentFrame->GetMapPoint(), R, t);
+
+    _currentFrame->SetTcw(createTransformationMatrix(R, t));
+
+    _initialFrame->CopyFrom(*_currentFrame);
+
+    _initializationDone = true;
 }
 
 std::vector<cv::DMatch> Slam::matchKeyPoints(const Frame& frame1, const Frame& frame2) {
@@ -164,7 +176,7 @@ cv::Mat Slam::estimateEssentialMatrix(const Frame& frame1, const Frame& frame2, 
     return essential_matrix;
 }
 
-void Slam::setCameraInfo(float cx, float cy, float fx, float fy)
+void Slam::SetCameraInfo(float cx, float cy, float fx, float fy)
 {
     _cameraInfo.cx = cx;
     _cameraInfo.cy = cy;

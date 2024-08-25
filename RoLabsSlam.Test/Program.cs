@@ -12,6 +12,7 @@ namespace RoLabsSlam.Test
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             System.Windows.Forms.Application.Run(new Form1());
+
         }
     }
 }

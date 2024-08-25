@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Frame.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)helpers.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)my_functions.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Slam.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SlamExport.hpp" />
