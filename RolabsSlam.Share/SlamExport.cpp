@@ -38,3 +38,18 @@ CVAPI(void) Slam_setIntrinsicsMatrix(Slam* slam, float fx, float fy, float cx, f
         slam->SetCameraInfo(fx, fy, cx, cy);
     }
 }
+
+CVAPI(void) Slam_getCurrentPose(Slam* slam, cv::Mat* pose) {
+    if (slam)
+    {
+        slam->GetCurrentFramePose(pose);
+    }
+}
+
+CVAPI(void) Slam_track(Slam* slam)
+{
+    if (slam)
+    {
+        slam->Track();
+    }
+}

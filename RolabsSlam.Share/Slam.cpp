@@ -1,5 +1,6 @@
 #include "Slam.hpp"
 #include "helpers.hpp"
+#include "Optimizer.hpp"
 
 #if defined(_WIN64) || defined(_WIN32)
 
@@ -22,53 +23,46 @@ void Slam::Start() {
     if (!_running) {
         _running = true;
         _frameCount = 0;
-        _initializationDone = 0;
-        _tracking_thread = std::thread(&Slam::trackingThread, this);
+        _initializationDone = false;
         _mapping_thread = std::thread(&Slam::mappingThread, this);
     }
 }
 
 void Slam::Stop() {
     _running = false;
-    if (_tracking_thread.joinable()) {
-        _tracking_thread.join();
-    }
     if (_mapping_thread.joinable()) {
         _mapping_thread.join();
     }
 }
 
-void Slam::trackingThread() {
-    while (_running) {
-        cv::Mat image;
-        {
-            std::lock_guard<std::mutex> lock(_image_mutex);
-            if (_currentImage.empty()) continue;
-            image = _currentImage.clone();
-        }
+void Slam::Track() {
 
-        // Tracking code here (feature extraction, pose estimation, etc.)
-        auto new_frame = std::make_shared<Frame>(image);
-        {
-            std::lock_guard<std::mutex> lock(_frame_mutex);
-            _currentFrame = new_frame;
-        }
-
-        if (_frameCount >= 2)
-        {
-            if (_initializationDone)
-            {
-                initialization();
-            }
-            else
-            {
-                // TODO
-            }
-        }
-
-        _lastFrame = _currentFrame;
-
+    cv::Mat image;
+    {
+        std::lock_guard<std::mutex> lock(_image_mutex);
+        image = _currentImage.clone();
     }
+
+    // Tracking code here (feature extraction, pose estimation, etc.)
+    auto new_frame = std::make_shared<Frame>(image);
+    {
+        std::lock_guard<std::mutex> lock(_frame_mutex);
+        _currentFrame = new_frame;
+    }
+
+    if (_frameCount >= 2)
+    {
+        if (!_initializationDone)
+        {
+            initialization();
+        }
+        else
+        {
+            // TODO
+        }
+    }
+    _lastFrame = _currentFrame;
+    _frameCount++;
 }
 
 void Slam::mappingThread() {
@@ -102,20 +96,23 @@ void Slam::initialization()
     // Ensure that both frames are valid
     if (!_currentFrame || !_lastFrame || _currentFrame->KeyPoints().empty() || _lastFrame->KeyPoints().empty()) {
         std::cerr << "Error: Invalid frames or no keypoints detected." << std::endl;
+        _initializationDone = false;
         return;
     }
 
     // Match keypoints between frames
-    std::vector<cv::DMatch> matches = matchKeyPoints(*_lastFrame , *_currentFrame);
+    std::vector<cv::DMatch> matches = matchKeyPoints(*_lastFrame, *_currentFrame);
     if (matches.empty()) {
         std::cerr << "Error: No matches found between frames." << std::endl;
+        _initializationDone = false;
         return;
     }
 
     // Filter good matches
     std::vector<cv::DMatch> good_matches = filterGoodMatches(matches);
-    if (good_matches.empty()) {
-        std::cerr << "Error: No good matches found between frames." << std::endl;
+    if (good_matches.size() < 50) {
+        std::cerr << "Error: Not enough good matches found between frames." << std::endl;
+        _initializationDone = false;
         return;
     }
 
@@ -123,18 +120,50 @@ void Slam::initialization()
     cv::Mat essential_matrix = estimateEssentialMatrix(*_lastFrame, *_currentFrame, good_matches, cameraMatrix);
     if (essential_matrix.empty()) {
         std::cerr << "Error: Could not estimate the Essential Matrix." << std::endl;
+        _initializationDone = false;
         return;
     }
-    std::cout << "Essential Matrix = {} " << essential_matrix << std::endl;
+    std::cout << "Essential Matrix = " << essential_matrix << std::endl;
 
     cv::Mat R, t;
+    std::vector<cv::KeyPoint> inlierLastFrameKeypoints, inlierCurrentFrameKeypoints;
+    std::vector<cv::DMatch> inlierMatches;
 
-    FindRtAndTriangulate(essential_matrix, cameraMatrix, _lastFrame->KeyPoints(), _currentFrame->KeyPoints(), good_matches, _currentFrame->GetMapPoint(), R, t);
+    // Decompose essential matrix, triangulate points, and filter outliers
+    FindRtAndTriangulate(
+        essential_matrix,
+        cameraMatrix,
+        _lastFrame->KeyPoints(),
+        _currentFrame->KeyPoints(),
+        good_matches,
+        _currentFrame->GetMapPoint(),
+        R,
+        t,
+        inlierLastFrameKeypoints,
+        inlierCurrentFrameKeypoints,
+        inlierMatches);
 
+    // Update the keypoints and matches in the current and last frame with only inliers
+    _lastFrame->SetKeyPoints(inlierLastFrameKeypoints);
+    _currentFrame->SetKeyPoints(inlierCurrentFrameKeypoints);
+
+    // Update the outliers in the current frame
+    _currentFrame->Outliers().clear(); // Clear previous outliers
+    for (size_t i = 0; i < inlierCurrentFrameKeypoints.size(); ++i)
+    {
+        // Mark inliers as non-outliers (-1 or some similar value)
+        _currentFrame->Outliers().push_back(false);
+    }
+
+    // Update the current frame's transformation matrix (camera to world)
     _currentFrame->SetTcw(createTransformationMatrix(R, t));
 
+    Optimizer::PoseOptimization(_currentFrame, _cameraInfo);
+
+    // Copy the current frame to the initial frame
     _initialFrame->CopyFrom(*_currentFrame);
 
+    // Mark initialization as done
     _initializationDone = true;
 }
 
@@ -182,4 +211,9 @@ void Slam::SetCameraInfo(float cx, float cy, float fx, float fy)
     _cameraInfo.cy = cy;
     _cameraInfo.fx = fx;
     _cameraInfo.fy = fx;
+}
+
+void Slam::GetCurrentFramePose(cv::Mat *pose)
+{
+    *pose = _currentFrame->Tcw().clone();
 }

@@ -50,6 +50,12 @@ namespace RoLabsSlamSharp
         [DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void Slam_setIntrinsicsMatrix(IntPtr slam, float fx, float fy, float cx, float cy);
 
+        [DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private static extern void Slam_getCurrentPose(IntPtr slam, IntPtr pose);
+
+        [DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        private static extern void Slam_track(IntPtr slam);
+
         // Constructor - Create Slam object
         public RolabsSlamSharpWrapper()
         {
@@ -105,6 +111,14 @@ namespace RoLabsSlamSharp
             return keypoints;
         }
 
+        public void GetPose(Mat pose)
+        {
+            if (_slamPtr == IntPtr.Zero)
+                throw new ObjectDisposedException("Slam");
+
+            Slam_getCurrentPose(_slamPtr, pose.CvPtr);
+        }
+
         // Stop the Slam process
         public void Stop()
         {
@@ -114,13 +128,22 @@ namespace RoLabsSlamSharp
             Slam_stop(_slamPtr);
         }
 
-        // Stop the Slam process
+        // Start the Slam process
         public void Start()
         {
             if (_slamPtr == IntPtr.Zero)
                 throw new ObjectDisposedException("Slam");
 
             Slam_start(_slamPtr);
+        }
+
+        // Do tracking
+        public void Track()
+        {
+            if (_slamPtr == IntPtr.Zero)
+                throw new ObjectDisposedException("Slam");
+
+            Slam_track(_slamPtr);
         }
 
         public void SetCameraIntrinsics(float fx, float fy, float cx, float cy)

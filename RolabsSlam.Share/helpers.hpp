@@ -10,9 +10,12 @@ void FindRtAndTriangulate(
     const std::vector<cv::KeyPoint>& lastFrameKeypoints, // Keypoints from _lastFrame
     const std::vector<cv::KeyPoint>& currentFrameKeypoints, // Keypoints from _currentFrame
     const std::vector<cv::DMatch>& good_matches,
-    std::vector<cv::Point3d>& map_points,
+    std::vector<MapPoint*>& map_points,
     cv::Mat& rotation,
-    cv::Mat& translation)
+    cv::Mat& translation,
+    std::vector<cv::KeyPoint>& inlierLastFrameKeypoints, // Output inliers for lastFrame
+    std::vector<cv::KeyPoint>& inlierCurrentFrameKeypoints, // Output inliers for currentFrame
+    std::vector<cv::DMatch>& inlierMatches) // Output inlier matches
 {
     // Decompose the essential matrix into R and t
     cv::Mat R, t;
@@ -27,7 +30,7 @@ void FindRtAndTriangulate(
     }
 
     // Recover pose
-    cv::recoverPose(essential_matrix, points1, points2, cameraMatrix, R, t, mask);
+    int inliersCount = cv::recoverPose(essential_matrix, points1, points2, cameraMatrix, R, t, mask);
 
     // Projection matrices for the two views
     cv::Mat P0 = cameraMatrix * cv::Mat::eye(3, 4, CV_64F); // [I | 0]
@@ -39,9 +42,33 @@ void FindRtAndTriangulate(
     rotation = R.clone();
     translation = t.clone();
 
+    // Filter inliers and prepare for triangulation
+    inlierLastFrameKeypoints.clear();
+    inlierCurrentFrameKeypoints.clear();
+    inlierMatches.clear();
+
+    std::vector<cv::Point2f> inlierPoints1, inlierPoints2;
+    for (int i = 0; i < mask.rows; i++)
+    {
+        if (mask.at<uchar>(i))
+        {
+            // Keep the inliers
+            inlierLastFrameKeypoints.push_back(lastFrameKeypoints[good_matches[i].queryIdx]);
+            inlierCurrentFrameKeypoints.push_back(currentFrameKeypoints[good_matches[i].trainIdx]);
+            inlierPoints1.push_back(points1[i]);
+            inlierPoints2.push_back(points2[i]);
+
+            // Update the matches to only include inliers
+            cv::DMatch inlierMatch;
+            inlierMatch.queryIdx = inlierLastFrameKeypoints.size() - 1; // New index
+            inlierMatch.trainIdx = inlierCurrentFrameKeypoints.size() - 1; // New index
+            inlierMatches.push_back(inlierMatch);
+        }
+    }
+
     // Triangulate points
     cv::Mat points4D;
-    cv::triangulatePoints(P0, P1, points1, points2, points4D);
+    cv::triangulatePoints(P0, P1, inlierPoints1, inlierPoints2, points4D);
 
     // Convert homogeneous coordinates to 3D points
     map_points.clear();
@@ -49,12 +76,17 @@ void FindRtAndTriangulate(
     {
         cv::Mat x = points4D.col(i);
         x /= x.at<float>(3); // Normalize to get (X, Y, Z, 1)
-        cv::Point3d point3D(
+        cv::Point3d point3D = cv::Point3d(
             x.at<float>(0),
             x.at<float>(1),
             x.at<float>(2)
         );
-        map_points.push_back(point3D);
+
+        MapPoint* mapPoint = new MapPoint();
+
+        mapPoint->setPosition(point3D);
+
+        map_points.push_back(mapPoint);
     }
 }
 

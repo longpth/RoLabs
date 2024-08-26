@@ -15,13 +15,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Frame.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)MapPoint.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Optimizer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Slam.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)SlamExport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Frame.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)helpers.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MapPoint.hpp" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)MyTypes.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)my_functions.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Optimizer.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Slam.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)SlamExport.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)types_c.h" />

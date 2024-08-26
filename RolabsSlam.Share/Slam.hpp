@@ -3,15 +3,8 @@
 #include <thread>
 #include <mutex>
 #include <opencv2/opencv.hpp>
+#include "MyTypes.hpp"
 #include "Frame.hpp"
-
-struct CameraInfo
-{
-    float cx;
-    float cy;
-    float fx;
-    float fy;
-};
 
 class Slam {
 public:
@@ -23,16 +16,16 @@ public:
     void GrabImage(const cv::Mat& image);
     void GetDebugKeyPoints(std::vector<cv::KeyPoint>* keypoints) const;
     void SetCameraInfo(float cx, float cy, float fx, float fy);
+    void GetCurrentFramePose(cv::Mat* pose);
+    void Track();
 
 private:
     void initialization();
-    void trackingThread();
     void mappingThread();
     std::vector<cv::DMatch> matchKeyPoints(const Frame& frame1, const Frame& frame2);
     std::vector<cv::DMatch> filterGoodMatches(const std::vector<cv::DMatch>& matches);
     cv::Mat estimateEssentialMatrix(const Frame& frame1, const Frame& frame2, const std::vector<cv::DMatch>& good_matches, const cv::Mat& cameraMatrix);
 
-    std::thread _tracking_thread;
     std::thread _mapping_thread;
     std::mutex _image_mutex;
     mutable std::mutex _frame_mutex;
