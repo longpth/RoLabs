@@ -89,13 +89,11 @@ namespace RoLabsSlam.Test
                         pictureBoxRaw.Image = newBitmap;
                     }));
 
-                    Mat pose = new Mat();
-
                     _rolabsSlamWrapper.GrabImage(_frame);
                     _rolabsSlamWrapper.Track();
 
                     KeyPoint[] keyPoints = _rolabsSlamWrapper.GetDebugKeyPoints();
-                    _rolabsSlamWrapper.GetPose(pose);
+                    Mat pose = _rolabsSlamWrapper.GetPose();
 
                     Matrix4 matrix4 = pose.ToMatrix4();
 

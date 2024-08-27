@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Frame.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)helpers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)MapPoint.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Optimizer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Slam.cpp" />

@@ -13,7 +13,7 @@ namespace RoLabsSlamSharp
 #if ANDROID
         private const string DllExtern = "libRoLabsSlam_Android.so";
 #else
-        private const string DllExtern = "RolabsSlam.Windows";
+        private const string DllExtern = "RoLabsSlam.Windows";
 #endif
         private IntPtr _slamPtr = IntPtr.Zero; // Pointer to native Slam object
 
@@ -111,12 +111,16 @@ namespace RoLabsSlamSharp
             return keypoints;
         }
 
-        public void GetPose(Mat pose)
+        public Mat GetPose()
         {
             if (_slamPtr == IntPtr.Zero)
                 throw new ObjectDisposedException("Slam");
 
+            Mat pose = new Mat(4, 4, MatType.CV_64FC1);
+
             Slam_getCurrentPose(_slamPtr, pose.CvPtr);
+
+            return pose;
         }
 
         // Stop the Slam process

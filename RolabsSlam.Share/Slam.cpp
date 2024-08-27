@@ -58,11 +58,11 @@ void Slam::Track() {
         }
         else
         {
-            // TODO
+            // TODO: for testing the pose recover from camera essential matrix
+            initialization();
         }
     }
-    _lastFrame = _currentFrame;
-    _frameCount++;
+    _previousFrame = _currentFrame;
 }
 
 void Slam::mappingThread() {
@@ -78,6 +78,7 @@ void Slam::mappingThread() {
 void Slam::GrabImage(const cv::Mat& image) {
     std::lock_guard<std::mutex> lock(_image_mutex);
     _currentImage = image.clone();
+    _frameCount++;
 }
 
 void Slam::GetDebugKeyPoints(std::vector<cv::KeyPoint>* keypoints) const {
@@ -94,57 +95,50 @@ void Slam::initialization()
     cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << _cameraInfo.fx, 0, _cameraInfo.cx, 0, _cameraInfo.fy, _cameraInfo.cy, 0, 0, 1);
 
     // Ensure that both frames are valid
-    if (!_currentFrame || !_lastFrame || _currentFrame->KeyPoints().empty() || _lastFrame->KeyPoints().empty()) {
+    if (!_currentFrame || !_previousFrame || _currentFrame->KeyPoints().empty() || _previousFrame->KeyPoints().empty()) {
         std::cerr << "Error: Invalid frames or no keypoints detected." << std::endl;
         _initializationDone = false;
         return;
     }
 
     // Match keypoints between frames
-    std::vector<cv::DMatch> matches = matchKeyPoints(*_lastFrame, *_currentFrame);
-    if (matches.empty()) {
+    std::vector<cv::DMatch> good_matches = matchKeyPoints(*_currentFrame, *_previousFrame);
+    // Ensure there are at least 8 matches
+    if (good_matches.size() < 8) {
         std::cerr << "Error: No matches found between frames." << std::endl;
         _initializationDone = false;
         return;
     }
 
-    // Filter good matches
-    std::vector<cv::DMatch> good_matches = filterGoodMatches(matches);
-    if (good_matches.size() < 50) {
-        std::cerr << "Error: Not enough good matches found between frames." << std::endl;
-        _initializationDone = false;
-        return;
-    }
-
-    // Estimate the Essential Matrix
-    cv::Mat essential_matrix = estimateEssentialMatrix(*_lastFrame, *_currentFrame, good_matches, cameraMatrix);
+    // Estimate the Essential Matrix, previous to current frame
+    cv::Mat essential_matrix = estimateEssentialMatrix(*_currentFrame, *_previousFrame, good_matches, cameraMatrix);
     if (essential_matrix.empty()) {
         std::cerr << "Error: Could not estimate the Essential Matrix." << std::endl;
         _initializationDone = false;
         return;
     }
-    std::cout << "Essential Matrix = " << essential_matrix << std::endl;
+    std::cout << "[Cpp] Essential Matrix = " << essential_matrix << std::endl;
 
     cv::Mat R, t;
-    std::vector<cv::KeyPoint> inlierLastFrameKeypoints, inlierCurrentFrameKeypoints;
+    std::vector<cv::KeyPoint> inlierPreviousFrameKeypoints, inlierCurrentFrameKeypoints;
     std::vector<cv::DMatch> inlierMatches;
 
     // Decompose essential matrix, triangulate points, and filter outliers
     FindRtAndTriangulate(
         essential_matrix,
         cameraMatrix,
-        _lastFrame->KeyPoints(),
+        _previousFrame->KeyPoints(),
         _currentFrame->KeyPoints(),
         good_matches,
         _currentFrame->GetMapPoint(),
         R,
         t,
-        inlierLastFrameKeypoints,
+        inlierPreviousFrameKeypoints,
         inlierCurrentFrameKeypoints,
         inlierMatches);
 
     // Update the keypoints and matches in the current and last frame with only inliers
-    _lastFrame->SetKeyPoints(inlierLastFrameKeypoints);
+    _previousFrame->SetKeyPoints(inlierPreviousFrameKeypoints);
     _currentFrame->SetKeyPoints(inlierCurrentFrameKeypoints);
 
     // Update the outliers in the current frame
@@ -155,54 +149,19 @@ void Slam::initialization()
         _currentFrame->Outliers().push_back(false);
     }
 
+    cv::Mat transformation = createTransformationMatrix(R, t);
+
+    std::cout << "[Cpp] transformation = " << transformation << std::endl;
+
     // Update the current frame's transformation matrix (camera to world)
-    _currentFrame->SetTcw(createTransformationMatrix(R, t));
+    _currentFrame->SetTcw(transformation);
 
-    Optimizer::PoseOptimization(_currentFrame, _cameraInfo);
+    //Optimizer::PoseOptimization(_currentFrame, _cameraInfo);
 
-    // Copy the current frame to the initial frame
-    _initialFrame->CopyFrom(*_currentFrame);
+    _initialFrame = std::make_shared<Frame>(*_currentFrame);
 
     // Mark initialization as done
     _initializationDone = true;
-}
-
-std::vector<cv::DMatch> Slam::matchKeyPoints(const Frame& frame1, const Frame& frame2) {
-    // Use BFMatcher to match descriptors
-    cv::BFMatcher matcher(cv::NORM_HAMMING, true); // NORM_HAMMING for ORB, true for cross-check
-    std::vector<cv::DMatch> matches;
-    matcher.match(frame1.Descriptors(), frame2.Descriptors(), matches);
-
-    // Optionally, you can sort matches based on their distances
-    std::sort(matches.begin(), matches.end(), [](const cv::DMatch& a, const cv::DMatch& b) {
-        return a.distance < b.distance;
-        });
-
-    return matches;
-}
-
-std::vector<cv::DMatch> Slam::filterGoodMatches(const std::vector<cv::DMatch>& matches) {
-    std::vector<cv::DMatch> good_matches;
-    float min_dist = matches.front().distance;
-    for (const auto& match : matches) {
-        if (match.distance <= std::max(2 * min_dist, 30.0f)) { // Consider adapting the threshold
-            good_matches.push_back(match);
-        }
-    }
-    return good_matches;
-}
-
-cv::Mat Slam::estimateEssentialMatrix(const Frame& frame1, const Frame& frame2, const std::vector<cv::DMatch>& good_matches, const cv::Mat& cameraMatrix) {
-    // Extract the matched keypoints
-    std::vector<cv::Point2f> points1, points2;
-    for (const auto& match : good_matches) {
-        points1.push_back(frame1.KeyPoints()[match.queryIdx].pt);
-        points2.push_back(frame2.KeyPoints()[match.trainIdx].pt);
-    }
-
-    // Compute the Essential Matrix using RANSAC to handle outliers
-    cv::Mat essential_matrix = cv::findEssentialMat(points1, points2, cameraMatrix, cv::RANSAC, 0.999, 1.0);
-    return essential_matrix;
 }
 
 void Slam::SetCameraInfo(float cx, float cy, float fx, float fy)
@@ -215,5 +174,8 @@ void Slam::SetCameraInfo(float cx, float cy, float fx, float fy)
 
 void Slam::GetCurrentFramePose(cv::Mat *pose)
 {
-    *pose = _currentFrame->Tcw().clone();
+    if (_currentFrame) {
+        //std::cout << "[Cpp] get current transformation = " << _currentFrame->Tcw() << std::endl;
+        _currentFrame->Tcw().copyTo(*pose);
+    }
 }

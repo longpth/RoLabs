@@ -40,7 +40,7 @@ CVAPI(void) Slam_setIntrinsicsMatrix(Slam* slam, float fx, float fy, float cx, f
 }
 
 CVAPI(void) Slam_getCurrentPose(Slam* slam, cv::Mat* pose) {
-    if (slam)
+    if (slam && pose)
     {
         slam->GetCurrentFramePose(pose);
     }

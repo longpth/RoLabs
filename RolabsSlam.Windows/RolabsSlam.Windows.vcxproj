@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\RolabsSlam.Share\Frame.cpp" />
+    <ClCompile Include="..\RoLabsSlam.Share\helpers.cpp" />
     <ClCompile Include="..\RoLabsSlam.Share\MapPoint.cpp" />
     <ClCompile Include="..\RoLabsSlam.Share\Optimizer.cpp" />
     <ClCompile Include="..\RolabsSlam.Share\Slam.cpp" />
@@ -27,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\RolabsSlam.Share\Frame.hpp" />
+    <ClInclude Include="..\RoLabsSlam.Share\helpers.hpp" />
     <ClInclude Include="..\RoLabsSlam.Share\MapPoint.hpp" />
     <ClInclude Include="..\RolabsSlam.Share\my_functions.h" />
     <ClInclude Include="..\RoLabsSlam.Share\Optimizer.hpp" />
@@ -87,7 +89,7 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)src\$(Configuration)\$(PlatformName)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">src\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\..\Rolabs\Platforms\Windows\libs\x64</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\RoLabsSlam.Windows.Test\libs\x64</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\build\intermediate\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)src\$(Configuration)\$(PlatformName)\</OutDir>

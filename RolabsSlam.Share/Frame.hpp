@@ -7,6 +7,12 @@
 
 class Frame {
 public:
+    Frame(Frame& other) {
+        _keypoints = other.KeyPoints();
+        _descriptors = other.Descriptors();
+        _Tcw = other.Tcw();
+    };
+
     Frame(const cv::Mat& image);
 
     // Getter methods
@@ -25,14 +31,14 @@ public:
     }
 
     // Get the transformation matrix Tcw (camera to world)
-    const cv::Mat& Tcw() const { return _Tcw; }
+    cv::Mat Tcw() const { return _Tcw.clone(); }
 
     // Set the transformation matrix Tcw (camera to world)
     void SetTcw(const cv::Mat& transformationMatrix) {
-        transformationMatrix.copyTo(_Tcw);
+        _Tcw = transformationMatrix.clone();
     }
 
-    void CopyFrom(const Frame& other)
+    void CopyFrom(Frame& other)
     {
         _keypoints = other.KeyPoints();
         _descriptors = other.Descriptors();
