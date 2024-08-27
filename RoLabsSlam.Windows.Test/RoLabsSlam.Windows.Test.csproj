@@ -7,6 +7,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +21,7 @@
     <ProjectReference Include="..\RoLabsSlamSharp\RoLabsSlamSharp.csproj" />
   </ItemGroup>
 
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="if not exist &quot;$(TargetDir)runtimes\win-x64\native\&quot; mkdir &quot;$(TargetDir)runtimes\win-x64\native\&quot;&#xA;copy /Y &quot;$(ProjectDir)libs\x64\*.dll&quot; &quot;$(TargetDir)runtimes\win-x64\native\&quot;&#xA;copy /Y &quot;$(ProjectDir)libs\x64\*.pdb&quot; &quot;$(TargetDir)runtimes\win-x64\native\&quot;" />
   </Target>
 

@@ -14,7 +14,7 @@ public:
     void Start();
     void Stop();
     void GrabImage(const cv::Mat& image);
-    void GetDebugKeyPoints(std::vector<cv::KeyPoint>* keypoints) const;
+    void GetDebugKeyPoints(std::vector<cv::KeyPoint>* keypointsCurrent, std::vector<cv::KeyPoint>* keypointsPrevious) const;
     void SetCameraInfo(float cx, float cy, float fx, float fy);
     void GetCurrentFramePose(cv::Mat* pose);
     void Track();

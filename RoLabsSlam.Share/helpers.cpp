@@ -13,8 +13,8 @@ void FindRtAndTriangulate(
     cv::Mat& rotation,
     cv::Mat& translation,
     std::vector<cv::KeyPoint>& inlierLastFrameKeypoints, // Output inliers for lastFrame
-    std::vector<cv::KeyPoint>& inlierCurrentFrameKeypoints, // Output inliers for currentFrame
-    std::vector<cv::DMatch>& inlierMatches) // Output inlier matches
+    std::vector<cv::KeyPoint>& inlierCurrentFrameKeypoints // Output inliers for currentFrame
+    )
 {
     // Decompose the essential matrix into R and t
     cv::Mat R, t;
@@ -44,7 +44,6 @@ void FindRtAndTriangulate(
     // Filter inliers and prepare for triangulation
     inlierLastFrameKeypoints.clear();
     inlierCurrentFrameKeypoints.clear();
-    inlierMatches.clear();
 
     std::vector<cv::Point2f> inlierPoints1, inlierPoints2;
     for (int i = 0; i < mask.rows; i++)
@@ -61,7 +60,6 @@ void FindRtAndTriangulate(
             cv::DMatch inlierMatch;
             inlierMatch.queryIdx = good_matches[i].queryIdx; // New index
             inlierMatch.trainIdx = good_matches[i].trainIdx; // New index
-            inlierMatches.push_back(inlierMatch);
         }
     }
 

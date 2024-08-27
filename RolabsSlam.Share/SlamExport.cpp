@@ -15,9 +15,9 @@ CVAPI(void) Slam_grabImage(Slam* slam, cv::Mat* image) {
     }
 }
 
-CVAPI(void) Slam_getDebugKeyPoints(Slam* slam, std::vector<cv::KeyPoint>* keypoints) {
-    if (slam && keypoints) {
-        slam->GetDebugKeyPoints(keypoints);
+CVAPI(void) Slam_getDebugKeyPoints(Slam* slam, std::vector<cv::KeyPoint>* keypointsCurrent, std::vector<cv::KeyPoint>* keypointsPrevious) {
+    if (slam) {
+        slam->GetDebugKeyPoints(keypointsCurrent, keypointsPrevious);
     }
 }
 

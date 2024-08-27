@@ -46,7 +46,7 @@ void Slam::Track() {
     // Tracking code here (feature extraction, pose estimation, etc.)
     auto new_frame = std::make_shared<Frame>(image);
     {
-        std::lock_guard<std::mutex> lock(_frame_mutex);
+        //std::lock_guard<std::mutex> lock(_frame_mutex);
         _currentFrame = new_frame;
     }
 
@@ -76,16 +76,19 @@ void Slam::mappingThread() {
 }
 
 void Slam::GrabImage(const cv::Mat& image) {
-    std::lock_guard<std::mutex> lock(_image_mutex);
+    //std::lock_guard<std::mutex> lock(_image_mutex);
     _currentImage = image.clone();
     _frameCount++;
 }
 
-void Slam::GetDebugKeyPoints(std::vector<cv::KeyPoint>* keypoints) const {
-    if (!keypoints) return;
-    std::lock_guard<std::mutex> lock(_frame_mutex);
-    if (_currentFrame) {
-        *keypoints = _currentFrame->KeyPoints();
+void Slam::GetDebugKeyPoints(std::vector<cv::KeyPoint>* keypointsCurrent, std::vector<cv::KeyPoint>* keypointsPrevious) const {
+    //std::lock_guard<std::mutex> lock(_frame_mutex);
+    if (_currentFrame && keypointsCurrent) {
+        *keypointsCurrent = _currentFrame->KeyPoints();
+    }
+    if (_previousFrame && keypointsPrevious)
+    {
+        *keypointsPrevious = _previousFrame->KeyPoints();
     }
 }
 
@@ -121,7 +124,6 @@ void Slam::initialization()
 
     cv::Mat R, t;
     std::vector<cv::KeyPoint> inlierPreviousFrameKeypoints, inlierCurrentFrameKeypoints;
-    std::vector<cv::DMatch> inlierMatches;
 
     // Decompose essential matrix, triangulate points, and filter outliers
     FindRtAndTriangulate(
@@ -134,8 +136,7 @@ void Slam::initialization()
         R,
         t,
         inlierPreviousFrameKeypoints,
-        inlierCurrentFrameKeypoints,
-        inlierMatches);
+        inlierCurrentFrameKeypoints);
 
     // Update the keypoints and matches in the current and last frame with only inliers
     _previousFrame->SetKeyPoints(inlierPreviousFrameKeypoints);

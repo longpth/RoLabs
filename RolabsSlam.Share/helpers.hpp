@@ -16,8 +16,8 @@ extern void FindRtAndTriangulate(
     cv::Mat& rotation,
     cv::Mat& translation,
     std::vector<cv::KeyPoint>& inlierLastFrameKeypoints, // Output inliers for lastFrame
-    std::vector<cv::KeyPoint>& inlierCurrentFrameKeypoints, // Output inliers for currentFrame
-    std::vector<cv::DMatch>& inlierMatches);
+    std::vector<cv::KeyPoint>& inlierCurrentFrameKeypoints // Output inliers for currentFrame
+    );
 
 
 extern cv::Mat createTransformationMatrix(const cv::Mat& R, const cv::Mat& t);

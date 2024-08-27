@@ -38,6 +38,10 @@ namespace RoLabsSlam.Test
         //3D rendering camera pose
         private Render3D _render3D;
 
+        // key points for drawing
+        KeyPoint[] _keyPointsPrevious;
+        KeyPoint[] _keyPointsCurrent;
+
         public RoLabsSlamForm()
         {
             InitializeComponent();
@@ -92,7 +96,7 @@ namespace RoLabsSlam.Test
                     _rolabsSlamWrapper.GrabImage(_frame);
                     _rolabsSlamWrapper.Track();
 
-                    KeyPoint[] keyPoints = _rolabsSlamWrapper.GetDebugKeyPoints();
+                    (_keyPointsCurrent , _keyPointsPrevious) = _rolabsSlamWrapper.GetDebugKeyPoints();
                     Mat pose = _rolabsSlamWrapper.GetPose();
 
                     Matrix4 matrix4 = pose.ToMatrix4();
@@ -101,11 +105,27 @@ namespace RoLabsSlam.Test
 
                     Mat debugImg = _frame.Clone();
 
-                    // Draw circles at each keypoint
-                    foreach (var keypoint in keyPoints)
+                    if (_keyPointsPrevious.Length > 0)
                     {
-                        // Draw a circle at each keypoint position
-                        Cv2.Circle(debugImg, (OpenCvSharp.Point)keypoint.Pt, 3, Scalar.Green, 2);
+                        for (int i = 0; i < _keyPointsCurrent.Length; i++)
+                        {
+                            var currentPoint = _keyPointsCurrent[i];
+                            var previousPoint = _keyPointsPrevious[i];
+
+                            // Draw an arrow between the matched keypoints
+                            Cv2.ArrowedLine(debugImg, new OpenCvSharp.Point((int)previousPoint.Pt.X, (int)previousPoint.Pt.Y), 
+                                                      new OpenCvSharp.Point((int)currentPoint.Pt.X, (int)currentPoint.Pt.Y), 
+                                                      new Scalar(0, 255, 0), 2, LineTypes.AntiAlias, 0, 0.2);
+                        }
+                    }
+                    else
+                    {
+                        // Draw circles at each keypoint
+                        foreach (var keypoint in _keyPointsCurrent)
+                        {
+                            // Draw a circle at each keypoint position
+                            Cv2.Circle(debugImg, (OpenCvSharp.Point)keypoint.Pt, 3, Scalar.Green, 2);
+                        }
                     }
 
                     // Convert the Mat to Bitmap on the background thread

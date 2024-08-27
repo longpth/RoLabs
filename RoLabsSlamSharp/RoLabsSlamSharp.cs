@@ -36,7 +36,7 @@ namespace RoLabsSlamSharp
 
         // P/Invoke for Slam_getDebugKeyPoints
         [DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        private static extern void Slam_getDebugKeyPoints(IntPtr slam, IntPtr keypoints);
+        private static extern void Slam_getDebugKeyPoints(IntPtr slam, IntPtr keypointsCurrent, IntPtr keypointPrevious);
 
         // P/Invoke for Slam_start
         [DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
@@ -55,6 +55,7 @@ namespace RoLabsSlamSharp
 
         [DllImport(DllExtern, CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         private static extern void Slam_track(IntPtr slam);
+
 
         // Constructor - Create Slam object
         public RolabsSlamSharpWrapper()
@@ -99,16 +100,19 @@ namespace RoLabsSlamSharp
         }
 
         // GetDebugKeyPoints method
-        public KeyPoint[] GetDebugKeyPoints()
+        public (KeyPoint[], KeyPoint[]) GetDebugKeyPoints()
         {
             if (_slamPtr == IntPtr.Zero)
                 throw new ObjectDisposedException("Slam");
 
-            using var keypointsVec = new VectorOfKeyPoint();
-            Slam_getDebugKeyPoints(_slamPtr, keypointsVec.CvPtr);
+            using var keypointsVecCur = new VectorOfKeyPoint();
+            using var keypointsVecPre = new VectorOfKeyPoint();
+            Slam_getDebugKeyPoints(_slamPtr, keypointsVecCur.CvPtr, keypointsVecPre.CvPtr);
 
-            KeyPoint[] keypoints = keypointsVec.ToArray();
-            return keypoints;
+            KeyPoint[] keypointsCur = keypointsVecCur.ToArray();
+            KeyPoint[] keypointsPre = keypointsVecPre.ToArray();
+
+            return (keypointsCur, keypointsPre);
         }
 
         public Mat GetPose()
